@@ -6,13 +6,13 @@ namespace QuestionBot
 {
     public class Bot
     {
-        private DiscordClient _discordClient;
+        private Discord.Client _discordClient;
         private ItemsJson<Streamer> _streamer;
 
         public Bot()
         {
-            _discordClient = new DiscordClient();
             _streamer = new ItemsJson<Streamer>("Streamer.json");
+            _discordClient = new Discord.Client(_streamer);
         }
 
         public async Task StartAsync()
