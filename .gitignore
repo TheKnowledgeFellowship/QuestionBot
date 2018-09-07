@@ -1,4 +1,7 @@
 
+# json
+*.json
+
 # Created by https://www.gitignore.io/api/vim,linux,macos,csharp,windows,visualstudio,visualstudiocode
 
 ### Csharp ###
