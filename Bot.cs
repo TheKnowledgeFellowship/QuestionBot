@@ -17,6 +17,8 @@ namespace QuestionBot
         {
             _streamer = new ItemsJson<Streamer>("Streamer.json");
             _discordClient = new Discord.Client(_streamer);
+
+            _discordClient.CommandsEvents.QuestionBotEnabled += HandleQuestionBotEnabled;
         }
 
         public async Task StartAsync()
@@ -24,14 +26,19 @@ namespace QuestionBot
             await _discordClient.ConnectAsync();
             foreach (var streamer in _streamer.Items)
             {
-                var client = new Twitch.Client(streamer.TwitchChannelName, streamer);
-                client.Connect();
-                client.QuestionReceived += HandleQuestionReceivedAsync;
-                _twitchClients.Add(client);
-
-                var questions = new ItemsJson<Question>($"Questions{streamer.DiscordId}.json");
-                _questions.Add(streamer.DiscordId, questions);
+                StreamerInit(streamer);
             }
+        }
+
+        private void StreamerInit(Streamer streamer)
+        {
+            var client = new Twitch.Client(streamer.TwitchChannelName, streamer);
+            client.Connect();
+            client.QuestionReceived += HandleQuestionReceivedAsync;
+            _twitchClients.Add(client);
+
+            var questions = new ItemsJson<Question>($"Questions{streamer.DiscordId}.json");
+            _questions.Add(streamer.DiscordId, questions);
         }
 
         private async void HandleQuestionReceivedAsync(object sender, Twitch.QuestionReceivedArgs e)
@@ -47,5 +54,7 @@ namespace QuestionBot
             question.Id = questionId;
             await _discordClient.SendMessageAsync(streamer.DiscordChannel, question.ToString());
         }
+
+        private async void HandleQuestionBotEnabled(object sender, Discord.QuestionBotEnabledArgs e) => StreamerInit(e.Streamer);
     }
 }

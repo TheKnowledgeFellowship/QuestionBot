@@ -12,6 +12,7 @@ namespace QuestionBot.Discord.Commands
         private ulong _admin;
         private ItemsJson<StreamerId> _permittedStreamerIds;
         private ItemsJson<Streamer> _streamer;
+        private CommandsEvents _commandsEvents;
 
         public General(GeneralDependencies dep)
         {
@@ -19,6 +20,7 @@ namespace QuestionBot.Discord.Commands
             _admin = config.Discord.Admin;
             this._permittedStreamerIds = dep.PermittedStreamerIds;
             this._streamer = dep.Streamer;
+            this._commandsEvents = dep.CommandsEvents;
         }
 
         [Command("Enable"), Aliases("e"), Description("Enable QuestionBot for yourself. Use this command like the following: `!enable [Twitch Channel Name] [Discord Channel Id]")]
@@ -56,8 +58,9 @@ namespace QuestionBot.Discord.Commands
                 }
 
                 var streamer = new Streamer(context.User.Id, discordChannelId, twitchChannelName);
-                await _streamer.AddItemAsync(streamer);
+                streamer.Id = await _streamer.AddItemAsync(streamer);
                 await context.RespondAsync($"You successfully enabled QuestionBot with the following values: [ TwitchChannelName: {streamer.TwitchChannelName} ] [ DiscordChannel: {streamer.DiscordChannel} ]");
+                _commandsEvents.OnQuestionBotEnabled(streamer);
             }
         }
 

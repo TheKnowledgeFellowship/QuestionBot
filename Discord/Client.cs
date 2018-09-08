@@ -14,6 +14,8 @@ namespace QuestionBot.Discord
         private ItemsJson<StreamerId> _permittedStreamerIds;
         private ItemsJson<Streamer> _streamer;
 
+        public CommandsEvents CommandsEvents { get; private set; }
+
         public Client(ItemsJson<Streamer> streamer)
         {
             _permittedStreamerIds = new ItemsJson<StreamerId>("PermittedStreamerIds.json");
@@ -26,13 +28,15 @@ namespace QuestionBot.Discord
                 TokenType = TokenType.Bot
             });
 
+            CommandsEvents = new CommandsEvents();
             DependencyCollection dep = null;
             using (var d = new DependencyCollectionBuilder())
             {
                 d.AddInstance(new GeneralDependencies()
                 {
                     PermittedStreamerIds = _permittedStreamerIds,
-                    Streamer = _streamer
+                    Streamer = _streamer,
+                    CommandsEvents = CommandsEvents
                 });
                 dep = d.Build();
             }
