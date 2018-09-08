@@ -16,7 +16,7 @@ namespace QuestionBot
         public Bot()
         {
             _streamer = new ItemsJson<Streamer>("Streamer.json");
-            _discordClient = new Discord.Client(_streamer);
+            _discordClient = new Discord.Client(_streamer, _questions);
 
             _discordClient.CommandsEvents.QuestionBotEnabled += HandleQuestionBotEnabled;
         }
@@ -47,8 +47,10 @@ namespace QuestionBot
             var streamer = _streamer.Items.Single(s => s.DiscordId == question.StreamerId);
 
             // Clean the message from the @streamer or streamer.
-            question.Content = question.Content.Replace($"@{streamer.TwitchChannelName}", "");
-            question.Content = question.Content.Replace($"{streamer.TwitchChannelName}", "");
+            question.Content = question.Content.Replace($"@{streamer.TwitchChannelName} ", "");
+            question.Content = question.Content.Replace($"{streamer.TwitchChannelName} ", "");
+
+            question.Content = question.Content.Trim();
 
             var questionId = await _questions[streamer.DiscordId].AddItemAsync(question);
             question.Id = questionId;

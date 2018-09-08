@@ -10,7 +10,7 @@ namespace QuestionBot.ItemsJson
     public class ItemsJson<T> where T : IIdentifier
     {
         private string _path = "";
-        private int _currentId = 0;
+        private long _currentId = 0;
         public List<T> Items { get; set; } = new List<T>();
 
         public ItemsJson(string path)
@@ -24,7 +24,7 @@ namespace QuestionBot.ItemsJson
             if (File.Exists(_path))
             {
                 var text = File.ReadAllText(_path);
-                var result = JsonConvert.DeserializeObject<(List<T>, int)>(text);
+                var result = JsonConvert.DeserializeObject<(List<T>, long)>(text);
                 Items = result.Item1;
                 _currentId = result.Item2;
             }
@@ -35,7 +35,7 @@ namespace QuestionBot.ItemsJson
             if (File.Exists(_path))
             {
                 var text = await File.ReadAllTextAsync(_path);
-                var result = JsonConvert.DeserializeObject<(List<T>, int)>(text);
+                var result = JsonConvert.DeserializeObject<(List<T>, long)>(text);
                 Items = result.Item1;
                 _currentId = result.Item2;
             }
@@ -69,7 +69,7 @@ namespace QuestionBot.ItemsJson
             return item.Id;
         }
 
-        public bool RemoveItem(int id)
+        public bool RemoveItem(long id)
         {
             var target = Items.SingleOrDefault(i => i.Id == id);
 
@@ -83,7 +83,7 @@ namespace QuestionBot.ItemsJson
             return false;
         }
 
-        public async Task<bool> RemoveItemAsync(int id)
+        public async Task<bool> RemoveItemAsync(long id)
         {
             var target = Items.SingleOrDefault(i => i.Id == id);
 
@@ -99,24 +99,26 @@ namespace QuestionBot.ItemsJson
 
         public T GetItem(long id) => Items.SingleOrDefault(i => i.Id == id);
 
-        public bool UpdateItem(int id, T newItem)
+        public bool UpdateItem(long id, T newItem)
         {
             if (RemoveItem(id))
             {
                 newItem.Id = id;
-                AddItem(newItem);
+                Items.Insert((int)id - 1, newItem);
+                SaveItems();
                 return true;
             }
 
             return false;
         }
 
-        public async Task<bool> UpdateItemAsync(int id, T newItem)
+        public async Task<bool> UpdateItemAsync(long id, T newItem)
         {
             if (await RemoveItemAsync(id))
             {
                 newItem.Id = id;
-                await AddItemAsync(newItem);
+                Items.Insert((int)id - 1, newItem);
+                await SaveItemsAsync();
                 return true;
             }
 

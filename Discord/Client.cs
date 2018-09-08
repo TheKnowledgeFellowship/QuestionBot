@@ -4,6 +4,7 @@ using DSharpPlus.CommandsNext;
 using QuestionBot.Discord.Commands;
 using QuestionBot.ItemsJson;
 using QuestionBot.Models;
+using System.Collections.Generic;
 
 namespace QuestionBot.Discord
 {
@@ -16,7 +17,7 @@ namespace QuestionBot.Discord
 
         public CommandsEvents CommandsEvents { get; private set; }
 
-        public Client(ItemsJson<Streamer> streamer)
+        public Client(ItemsJson<Streamer> streamer, Dictionary<ulong, ItemsJson<Models.Question>> questions)
         {
             _permittedStreamerIds = new ItemsJson<StreamerId>("PermittedStreamerIds.json");
             _streamer = streamer;
@@ -38,6 +39,10 @@ namespace QuestionBot.Discord
                     Streamer = _streamer,
                     CommandsEvents = CommandsEvents
                 });
+                d.AddInstance(new QuestionDependencies()
+                {
+                    Questions = questions
+                });
                 dep = d.Build();
             }
 
@@ -49,6 +54,7 @@ namespace QuestionBot.Discord
             });
 
             _commands.RegisterCommands<Commands.General>();
+            _commands.RegisterCommands<Commands.Question>();
         }
 
         public async Task ConnectAsync()

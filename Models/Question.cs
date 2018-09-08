@@ -18,6 +18,7 @@ namespace QuestionBot.Models
         public string Content { get; set; }
         public string Author { get; set; }
         public DateTime Time { get; set; }
+        public bool Answered { get; set; } = false;
 
         public override string ToString() => $"[{Time.ToString("s")}] {Author} asked \"{Content}\" #{Id}";
     }
