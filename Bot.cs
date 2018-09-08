@@ -47,8 +47,8 @@ namespace QuestionBot
             var streamer = _streamer.Items.Single(s => s.DiscordId == question.StreamerId);
 
             // Clean the message from the @streamer or streamer.
-            question.Content = question.Content.Replace($"@{streamer.TwitchChannelName} ", "");
-            question.Content = question.Content.Replace($"{streamer.TwitchChannelName} ", "");
+            // question.Content = question.Content.Replace($"@{streamer.TwitchChannelName} ", "");
+            // question.Content = question.Content.Replace($"{streamer.TwitchChannelName} ", "");
 
             question.Content = question.Content.Trim();
 

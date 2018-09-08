@@ -59,13 +59,21 @@ namespace QuestionBot.Twitch
 
         private void HandleMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            var message = e.ChatMessage.Message;
+            var message = e.ChatMessage.Message.ToLower();
+            var isQuestion = false;
+
             if ((message.Contains("?")
             || message.Contains("question")
             || message.Contains("❓")
             || message.Contains("❔")
             || message.Contains("⁉"))
-            && message.Contains(_channelName))
+            && message.Contains(_channelName.ToLower()))
+                isQuestion = true;
+
+            if (message.Contains("!q"))
+                isQuestion = true;
+
+            if (isQuestion)
             {
                 OnQuestionReceived(new Question(_streamer.DiscordId, message, e.ChatMessage.DisplayName, DateTime.Now));
                 SendMessage($"@{e.ChatMessage.DisplayName} Your question got recognized.");
