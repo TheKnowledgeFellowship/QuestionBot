@@ -26,9 +26,11 @@ namespace QuestionBot.Discord.Commands
         [Command("Enable"), Aliases("e"), Description("Enable QuestionBot for yourself. Use this command like the following: `!enable [Twitch Channel Name] [Discord Channel Id]")]
         public async Task Enable(CommandContext context)
         {
+            Logger.Console.LogCommand("Enable", context);
+
             if (!_permittedStreamerIds.Items.Exists(psi => psi.DiscordId == context.User.Id))
             {
-                await context.RespondAsync("Sorry, you aren't a permitted streamer. Please contact jspp for help.");
+                await Logger.Console.ResponseLogAsync("Sorry, you aren't a permitted streamer. Please contact jspp for help.", context);
                 return;
             }
             else
@@ -37,7 +39,7 @@ namespace QuestionBot.Discord.Commands
 
                 if (arguments.Count() < 3)
                 {
-                    await context.RespondAsync("Error. You did not provide enough arguments.");
+                    await Logger.Console.ResponseLogAsync("Error. You did not provide enough arguments.", context);
                     return;
                 }
 
@@ -45,7 +47,7 @@ namespace QuestionBot.Discord.Commands
                 ulong discordChannelId;
                 if (!ulong.TryParse(arguments[2], out discordChannelId))
                 {
-                    await context.RespondAsync("Error. The provided ChannelId is not an id.");
+                    await Logger.Console.ResponseLogAsync("Error. The provided ChannelId is not an id.", context);
                     return;
                 }
 
@@ -53,22 +55,24 @@ namespace QuestionBot.Discord.Commands
                 var potentialStreamer = _streamer.Items.SingleOrDefault(s => s.DiscordId == context.User.Id);
                 if (potentialStreamer != null)
                 {
-                    await context.RespondAsync($"You already enabled QuestionBot with the following values: [ TwitchChannelName:{potentialStreamer.TwitchChannelName} ] [ DiscordChannel:{potentialStreamer.DiscordChannel} ]");
+                    await Logger.Console.ResponseLogAsync($"You already enabled QuestionBot with the following values: [ TwitchChannelName:{potentialStreamer.TwitchChannelName} ] [ DiscordChannel:{potentialStreamer.DiscordChannel} ]", context);
                     return;
                 }
 
                 var streamer = new Streamer(context.User.Id, discordChannelId, twitchChannelName);
                 _commandsEvents.OnQuestionBotEnabled(streamer);
-                await context.RespondAsync($"You successfully enabled QuestionBot with the following values: [ TwitchChannelName: {streamer.TwitchChannelName} ] [ DiscordChannel: {streamer.DiscordChannel} ]");
+                await Logger.Console.ResponseLogAsync($"You successfully enabled QuestionBot with the following values: [ TwitchChannelName: {streamer.TwitchChannelName} ] [ DiscordChannel: {streamer.DiscordChannel} ]", context);
             }
         }
 
         [Command("AddPermittedStreamerId"), Aliases("apsi"), Description("Add a permitted streamer id.")]
         public async Task AddPermittedStreamerId(CommandContext context)
         {
+            Logger.Console.LogCommand("AddPermittedStreamerId", context);
+
             if (context.User.Id != _admin)
             {
-                await context.RespondAsync("Only the Admin can do this.");
+                await Logger.Console.ResponseLogAsync("Only the Admin can do this.", context);
             }
             else
             {
@@ -79,16 +83,16 @@ namespace QuestionBot.Discord.Commands
                 {
                     if (_permittedStreamerIds.Items.Exists(psi => psi.DiscordId == output))
                     {
-                        await context.RespondAsync($"The id {output} is already in the permitted streamer ids.");
+                        await Logger.Console.ResponseLogAsync($"The id {output} is already in the permitted streamer ids.", context);
                         return;
                     }
 
                     await _permittedStreamerIds.AddItemAsync(new StreamerId(output));
-                    await context.RespondAsync($"You successfully added {output} to the permitted streamer ids.");
+                    await Logger.Console.ResponseLogAsync($"You successfully added {output} to the permitted streamer ids.", context);
                     return;
                 }
 
-                await context.RespondAsync($"Error. The first argument has to be an id.");
+                await Logger.Console.ResponseLogAsync($"Error. The first argument has to be an id.", context);
             }
         }
     }

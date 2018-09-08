@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Timers;
 using QuestionBot.Models;
 using TwitchLib.Client;
@@ -30,7 +31,7 @@ namespace QuestionBot.Twitch
                 twitchUsername: config.Twitch.Username,
                 twitchOAuth: config.Twitch.AccessToken
             );
-        }
+       }
 
         public event EventHandler<QuestionReceivedArgs> QuestionReceived;
 
@@ -39,11 +40,18 @@ namespace QuestionBot.Twitch
             _client = new TwitchClient();
             _client.Initialize(_credentials, _channelName);
             _client.OnMessageReceived += HandleMessageReceived;
+            _client.OnConnected += (Object source, OnConnectedArgs e) => Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Connected.");
+            _client.OnDisconnected += (Object source, OnDisconnectedArgs e) => Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Disconnected.", true);
+            _client.OnConnectionError += (Object source, OnConnectionErrorArgs e) => Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Connection Error.", true);
 
             _client.Connect();
 
             var reconnect = new Timer(TimeSpan.FromHours(6).TotalMilliseconds);
-            reconnect.Elapsed += (Object source, ElapsedEventArgs e) => _client.Reconnect();
+            reconnect.Elapsed += (Object source, ElapsedEventArgs e) =>
+            {
+                _client.Reconnect();
+                Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Reconnecting.");
+            };
             reconnect.AutoReset = true;
             reconnect.Enabled = true;
         }
@@ -55,6 +63,7 @@ namespace QuestionBot.Twitch
         private void SendMessage(string content)
         {
             _client.SendMessage(_channelName, content);
+            Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Message sent: {content}");
         }
 
         private void HandleMessageReceived(object sender, OnMessageReceivedArgs e)
@@ -75,8 +84,9 @@ namespace QuestionBot.Twitch
 
             if (isQuestion)
             {
-                OnQuestionReceived(new Question(_streamer.DiscordId, message, e.ChatMessage.DisplayName, DateTime.Now));
-                SendMessage($"@{e.ChatMessage.DisplayName} Your question got recognized.");
+                OnQuestionReceived(new Question(_streamer.DiscordId, e.ChatMessage.Message, e.ChatMessage.DisplayName, DateTime.Now));
+                Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Question received: \"{e.ChatMessage.Message}\"");
+                SendMessage($"@{e.ChatMessage.DisplayName} your question got recognized.");
             }
         }
     }

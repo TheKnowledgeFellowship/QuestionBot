@@ -60,17 +60,20 @@ namespace QuestionBot.Discord
         public async Task ConnectAsync()
         {
             await _discord.ConnectAsync();
+            Logger.Console.Log(Logger.Category.Discord, "Connecting.");
         }
 
         public async Task DisconnectAsync()
         {
             await _discord.DisconnectAsync();
+            Logger.Console.Log(Logger.Category.Discord, "Disconnecting.");
         }
 
         public async Task SendMessageAsync(ulong channelId, string content)
         {
             var channel = await _discord.GetChannelAsync(channelId);
             await _discord.SendMessageAsync(channel, content);
+            Logger.Console.Log(Logger.Category.Discord, $"Sent message in {channelId}: {content}");
         }
     }
 }

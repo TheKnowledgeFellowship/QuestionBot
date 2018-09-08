@@ -20,11 +20,13 @@ namespace QuestionBot.Discord.Commands
         [Command("PrintQuestions"), Aliases("pq"), Description("Prints out all unanswered questions.")]
         public async Task PrintQuestions(CommandContext context)
         {
+            Logger.Console.LogCommand("PrintQuestions", context);
+
             var id = context.User.Id;
 
             if (!IsStreamerWithQuestions(id))
             {
-                await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
+                await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
@@ -35,17 +37,19 @@ namespace QuestionBot.Discord.Commands
                     response += $"{question.ToString()}\n";
             }
 
-            await context.RespondAsync(response);
+            await Logger.Console.ResponseLogAsync(response, context);
         }
 
         [Command("PrintAllQuestions"), Aliases("paq"), Description("Prints out all questions.")]
         public async Task PrintAllQuestions(CommandContext context)
         {
+            Logger.Console.LogCommand("PrintAllQuestions", context);
+
             var id = context.User.Id;
 
             if (!IsStreamerWithQuestions(id))
             {
-                await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
+                await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
@@ -58,31 +62,33 @@ namespace QuestionBot.Discord.Commands
                     response += $"{question.ToString()} [answered]\n";
             }
 
-            await context.RespondAsync(response);
+            await Logger.Console.ResponseLogAsync(response, context);
         }
 
         [Command("Answered"), Aliases("a"), Description("Marks a question as answered.")]
         public async Task Answered(CommandContext context)
         {
+            Logger.Console.LogCommand("Answered", context);
+
             var id = context.User.Id;
 
             if (!IsStreamerWithQuestions(id))
             {
-                await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
+                await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
             var arguments = context.RawArgumentString.Split(" ");
             if (arguments.Count() < 2)
             {
-                await context.RespondAsync($"Please provide the id of the question you want to mark as answered.");
+                await Logger.Console.ResponseLogAsync($"Please provide the id of the question you want to mark as answered.", context);
                 return;
             }
 
             long questionId;
             if (!long.TryParse(arguments[1], out questionId))
             {
-                await context.RespondAsync($"The Id you provided can't be read.");
+                await Logger.Console.ResponseLogAsync($"The Id you provided can't be read.", context);
                 return;
             }
 
@@ -90,37 +96,39 @@ namespace QuestionBot.Discord.Commands
 
             if (question == null)
             {
-                await context.RespondAsync($"Sorry, no question with the specified Id could be found.");
+                await Logger.Console.ResponseLogAsync($"Sorry, no question with the specified Id could be found.", context);
                 return;
             }
 
             question.Answered = true;
             await _questions[id].UpdateItemAsync(question.Id, question);
-            await context.RespondAsync($"Question #{question.Id} has been marked as answered.");
+            await Logger.Console.ResponseLogAsync($"Question #{question.Id} has been marked as answered.", context);
         }
 
         [Command("Unanswered"), Aliases("u"), Description("Marks a question as unanswered.")]
         public async Task Unanswered(CommandContext context)
         {
+            Logger.Console.LogCommand("Unanswered", context);
+
             var id = context.User.Id;
 
             if (!IsStreamerWithQuestions(id))
             {
-                await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
+                await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
             var arguments = context.RawArgumentString.Split(" ");
             if (arguments.Count() < 2)
             {
-                await context.RespondAsync($"Please provide the id of the question you want to mark as unanswered.");
+                await Logger.Console.ResponseLogAsync($"Please provide the id of the question you want to mark as unanswered.", context);
                 return;
             }
 
             long questionId;
             if (!long.TryParse(arguments[1], out questionId))
             {
-                await context.RespondAsync($"The Id you provided can't be read.");
+                await Logger.Console.ResponseLogAsync($"The Id you provided can't be read.", context);
                 return;
             }
 
@@ -128,37 +136,39 @@ namespace QuestionBot.Discord.Commands
 
             if (question == null)
             {
-                await context.RespondAsync($"Sorry, no question with the specified Id could be found.");
+                await Logger.Console.ResponseLogAsync($"Sorry, no question with the specified Id could be found.", context);
                 return;
             }
 
             question.Answered = false;
             await _questions[id].UpdateItemAsync(question.Id, question);
-            await context.RespondAsync($"Question #{question.Id} has been marked as unanswered.");
+            await Logger.Console.ResponseLogAsync($"Question #{question.Id} has been marked as unanswered.", context);
         }
 
         [Command("Print"), Aliases("p"), Description("Prints a question.")]
         public async Task Print(CommandContext context)
         {
+            Logger.Console.LogCommand("Print", context);
+
             var id = context.User.Id;
 
             if (!IsStreamerWithQuestions(id))
             {
-                await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
+                await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
             var arguments = context.RawArgumentString.Split(" ");
             if (arguments.Count() < 2)
             {
-                await context.RespondAsync($"Please provide the id of the question you want to print out.");
+                await Logger.Console.ResponseLogAsync($"Please provide the id of the question you want to print out.", context);
                 return;
             }
 
             long questionId;
             if (!long.TryParse(arguments[1], out questionId))
             {
-                await context.RespondAsync($"The Id you provided can't be read.");
+                await Logger.Console.ResponseLogAsync($"The Id you provided can't be read.", context);
                 return;
             }
 
@@ -166,35 +176,37 @@ namespace QuestionBot.Discord.Commands
 
             if (question == null)
             {
-                await context.RespondAsync($"Sorry, no question with the specified Id could be found.");
+                await Logger.Console.ResponseLogAsync($"Sorry, no question with the specified Id could be found.", context);
                 return;
             }
 
-            await context.RespondAsync(question.ToString());
+            await Logger.Console.ResponseLogAsync(question.ToString(), context);
         }
 
         [Command("LastHours"), Aliases("lh"), Description("Prints all questions, that got asked in the last X hours. X gets specified by you.")]
-        public async Task Today(CommandContext context)
+        public async Task LastHours(CommandContext context)
         {
+            Logger.Console.LogCommand("LastHours", context);
+
             var id = context.User.Id;
 
             if (!IsStreamerWithQuestions(id))
             {
-                await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
+                await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
             var arguments = context.RawArgumentString.Split(" ");
             if (arguments.Count() < 2)
             {
-                await context.RespondAsync($"Please provide the number of hours you want to target.");
+                await Logger.Console.ResponseLogAsync($"Please provide the number of hours you want to target.", context);
                 return;
             }
 
             int hours;
             if (!int.TryParse(arguments[1], out hours))
             {
-                await context.RespondAsync($"The number of hours you provided can't be read.");
+                await Logger.Console.ResponseLogAsync($"The number of hours you provided can't be read.", context);
                 return;
             }
 
@@ -204,7 +216,7 @@ namespace QuestionBot.Discord.Commands
 
             if (questions.Count() == 0)
             {
-                await context.RespondAsync($"There are no questions, that got asked in the last {hours} hours.");
+                await Logger.Console.ResponseLogAsync($"There are no questions, that got asked in the last {hours} hours.", context);
                 return;
             }
 
@@ -217,7 +229,7 @@ namespace QuestionBot.Discord.Commands
                     response += $"{question.ToString()} [answered]\n";
             }
 
-            await context.RespondAsync(response);
+            await Logger.Console.ResponseLogAsync(response, context);
         }
 
         private bool IsStreamerWithQuestions(ulong id) => _questions.Keys.Any(k => k == id);
