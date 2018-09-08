@@ -110,5 +110,34 @@ namespace QuestionBot.Discord.Commands
                 await Logger.Console.ResponseLogAsync($"Error. The first argument has to be an id.", context);
             }
         }
+
+        [Command("RemoveStreamer"), Aliases("rs"), Description("Remove a streamer id from the permitted streamer ids and remove all content associated with the streamer.")]
+        public async Task RemoveermittedStreamerId(CommandContext context)
+        {
+            Logger.Console.LogCommand("RemovePermittedStreamerId", context);
+
+            if (context.User.Id != _admin)
+            {
+                await Logger.Console.ResponseLogAsync("Only the Admin can do this.", context);
+            }
+            else
+            {
+                var arguments = context.RawArgumentString.Split(" ");
+                ulong id;
+
+                if (ulong.TryParse(arguments[1], out id))
+                {
+                    _commandsEvents.OnRemoveStreamer(id);
+
+                    var storedId = _permittedStreamerIds.Items.SingleOrDefault(psi => psi.DiscordId == id);
+                    if (storedId != null)
+                        await _permittedStreamerIds.RemoveItemAsync(storedId.Id);
+
+                    await Logger.Console.ResponseLogAsync($"The streamer has removed from the permitted streamers, if they were part of them. All connected information got removed as well and QuestionBot no longer works for them.", context);
+                }
+                else
+                    await Logger.Console.ResponseLogAsync($"Error. The first argument has to be an id.", context);
+            }
+        }
     }
 }

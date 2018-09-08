@@ -21,6 +21,7 @@ namespace QuestionBot
             _discordClient = new Discord.Client(_streamer, _questions);
 
             _discordClient.CommandsEvents.QuestionBotEnabled += HandleQuestionBotEnabled;
+            _discordClient.CommandsEvents.RemoveStreamer += HandleRemoveStreamer;
         }
 
         public async Task StartAsync()
@@ -68,5 +69,17 @@ namespace QuestionBot
         }
 
         private async void HandleQuestionBotEnabled(object sender, Discord.QuestionBotEnabledArgs e) => await StreamerInitAsync(e.Streamer, true);
+
+        private async void HandleRemoveStreamer(object sender, Discord.RemoveStreamerArgs e)
+        {
+            var id = e.StreamerId;
+
+            var storedStreamer = _streamer.Items.SingleOrDefault(s => s.DiscordId == id);
+            if (storedStreamer != null)
+                await _streamer.RemoveItemAsync(storedStreamer.Id);
+
+            _questions[id].Purge();
+            _questions.Remove(id);
+        }
     }
 }

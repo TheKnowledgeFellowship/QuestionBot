@@ -138,5 +138,12 @@ namespace QuestionBot.ItemsJson
 
             return false;
         }
+
+        public void Purge()
+        {
+            Items = new List<T>();
+            _currentId = 0;
+            File.Delete(_path);
+        }
     }
 }
