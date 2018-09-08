@@ -10,11 +10,13 @@ namespace QuestionBot
     {
         private Discord.Client _discordClient;
         private ItemsJson<Streamer> _streamer;
+        private Twitch.Api _twitchApi;
         private List<Twitch.Client> _twitchClients = new List<Twitch.Client>();
         private Dictionary<ulong, ItemsJson<Question>> _questions = new Dictionary<ulong, ItemsJson<Question>>();
 
         public Bot()
         {
+            _twitchApi = new Twitch.Api();
             _streamer = new ItemsJson<Streamer>("Streamer.json");
             _discordClient = new Discord.Client(_streamer, _questions);
 
@@ -26,12 +28,16 @@ namespace QuestionBot
             await _discordClient.ConnectAsync();
             foreach (var streamer in _streamer.Items)
             {
-                StreamerInit(streamer);
+                await StreamerInitAsync(streamer);
             }
         }
 
-        private void StreamerInit(Streamer streamer)
+        private async Task StreamerInitAsync(Streamer streamer, bool creation = false)
         {
+            // One time first time actions.
+            if (creation)
+                streamer.TwitchClientId = await _twitchApi.GetChannelIdFromChannelName(streamer.TwitchChannelName);
+
             var client = new Twitch.Client(streamer.TwitchChannelName, streamer);
             client.Connect();
             client.QuestionReceived += HandleQuestionReceivedAsync;
@@ -39,6 +45,9 @@ namespace QuestionBot
 
             var questions = new ItemsJson<Question>($"Questions{streamer.DiscordId}.json");
             _questions.Add(streamer.DiscordId, questions);
+
+            if (creation)
+                await _streamer.AddItemAsync(streamer);
         }
 
         private async void HandleQuestionReceivedAsync(object sender, Twitch.QuestionReceivedArgs e)
@@ -51,12 +60,13 @@ namespace QuestionBot
             // question.Content = question.Content.Replace($"{streamer.TwitchChannelName} ", "");
 
             question.Content = question.Content.Trim();
+            question.WhileLive = await _twitchApi.CheckStreamerOnlineStatus(streamer.TwitchClientId);
 
             var questionId = await _questions[streamer.DiscordId].AddItemAsync(question);
             question.Id = questionId;
             await _discordClient.SendMessageAsync(streamer.DiscordChannel, question.ToString());
         }
 
-        private async void HandleQuestionBotEnabled(object sender, Discord.QuestionBotEnabledArgs e) => StreamerInit(e.Streamer);
+        private async void HandleQuestionBotEnabled(object sender, Discord.QuestionBotEnabledArgs e) => await StreamerInitAsync(e.Streamer);
     }
 }

@@ -58,9 +58,8 @@ namespace QuestionBot.Discord.Commands
                 }
 
                 var streamer = new Streamer(context.User.Id, discordChannelId, twitchChannelName);
-                streamer.Id = await _streamer.AddItemAsync(streamer);
-                await context.RespondAsync($"You successfully enabled QuestionBot with the following values: [ TwitchChannelName: {streamer.TwitchChannelName} ] [ DiscordChannel: {streamer.DiscordChannel} ]");
                 _commandsEvents.OnQuestionBotEnabled(streamer);
+                await context.RespondAsync($"You successfully enabled QuestionBot with the following values: [ TwitchChannelName: {streamer.TwitchChannelName} ] [ DiscordChannel: {streamer.DiscordChannel} ]");
             }
         }
 

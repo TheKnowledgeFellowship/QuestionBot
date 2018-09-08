@@ -16,5 +16,6 @@ namespace QuestionBot.Models
         public ulong DiscordId { get; set; }
         public ulong DiscordChannel { get; set; }
         public string TwitchChannelName { get; set; }
+        public string TwitchClientId { get; set; } = null;
     }
 }
