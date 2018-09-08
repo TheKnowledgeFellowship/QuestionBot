@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace QuestionBot.Discord.Commands
         {
             var id = context.User.Id;
 
-            if (!_questions.Keys.Any(k => k == id))
+            if (!IsStreamerWithQuestions(id))
             {
                 await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
                 return;
@@ -42,7 +43,7 @@ namespace QuestionBot.Discord.Commands
         {
             var id = context.User.Id;
 
-            if (!_questions.Keys.Any(k => k == id))
+            if (!IsStreamerWithQuestions(id))
             {
                 await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
                 return;
@@ -65,7 +66,7 @@ namespace QuestionBot.Discord.Commands
         {
             var id = context.User.Id;
 
-            if (!_questions.Keys.Any(k => k == id))
+            if (!IsStreamerWithQuestions(id))
             {
                 await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
                 return;
@@ -103,7 +104,7 @@ namespace QuestionBot.Discord.Commands
         {
             var id = context.User.Id;
 
-            if (!_questions.Keys.Any(k => k == id))
+            if (!IsStreamerWithQuestions(id))
             {
                 await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
                 return;
@@ -141,7 +142,7 @@ namespace QuestionBot.Discord.Commands
         {
             var id = context.User.Id;
 
-            if (!_questions.Keys.Any(k => k == id))
+            if (!IsStreamerWithQuestions(id))
             {
                 await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
                 return;
@@ -171,5 +172,54 @@ namespace QuestionBot.Discord.Commands
 
             await context.RespondAsync(question.ToString());
         }
+
+        [Command("LastHours"), Aliases("lh"), Description("Prints all questions, that got asked in the last X hours. X gets specified by you.")]
+        public async Task Today(CommandContext context)
+        {
+            var id = context.User.Id;
+
+            if (!IsStreamerWithQuestions(id))
+            {
+                await context.RespondAsync($"Sorry, you aren't a registered streamer that got any questions.");
+                return;
+            }
+
+            var arguments = context.RawArgumentString.Split(" ");
+            if (arguments.Count() < 2)
+            {
+                await context.RespondAsync($"Please provide the number of hours you want to target.");
+                return;
+            }
+
+            int hours;
+            if (!int.TryParse(arguments[1], out hours))
+            {
+                await context.RespondAsync($"The number of hours you provided can't be read.");
+                return;
+            }
+
+            var limit = DateTime.Now - TimeSpan.FromHours(hours);
+
+            var questions = _questions[id].Items.Where(h => h.Time > limit);
+
+            if (questions.Count() == 0)
+            {
+                await context.RespondAsync($"There are no questions, that got asked in the last {hours} hours.");
+                return;
+            }
+
+            var response = $"All questions of the last {hours} hours:\n";
+            foreach (var question in questions)
+            {
+                if (!question.Answered)
+                    response += $"{question.ToString()}\n";
+                else
+                    response += $"{question.ToString()} [answered]\n";
+            }
+
+            await context.RespondAsync(response);
+        }
+
+        private bool IsStreamerWithQuestions(ulong id) => _questions.Keys.Any(k => k == id);
     }
 }
