@@ -53,18 +53,20 @@ namespace QuestionBot.ItemsJson
             await File.WriteAllTextAsync(_path, itemsJson);
         }
 
-        public void AddItem(T item)
+        public long AddItem(T item)
         {
             item.Id = ++_currentId;
             Items.Add(item);
             SaveItems();
+            return item.Id;
         }
 
-        public async Task AddItemAsync(T item)
+        public async Task<long> AddItemAsync(T item)
         {
             item.Id = ++_currentId;
             Items.Add(item);
             await SaveItemsAsync();
+            return item.Id;
         }
 
         public bool RemoveItem(int id)
@@ -95,7 +97,7 @@ namespace QuestionBot.ItemsJson
             return false;
         }
 
-        public T GetItem(int id) => Items.SingleOrDefault(i => i.Id == id);
+        public T GetItem(long id) => Items.SingleOrDefault(i => i.Id == id);
 
         public bool UpdateItem(int id, T newItem)
         {
