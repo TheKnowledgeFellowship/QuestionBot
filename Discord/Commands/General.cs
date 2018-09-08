@@ -23,7 +23,7 @@ namespace QuestionBot.Discord.Commands
             this._commandsEvents = dep.CommandsEvents;
         }
 
-        [Command("Enable"), Aliases("e"), Description("Enable QuestionBot for yourself. Use this command like the following: `!enable [Twitch Channel Name] [Discord Channel Id]")]
+        [Command("Enable"), Aliases("e"), Description("Enable QuestionBot for yourself. Use this command like the following: `!enable [Twitch Channel Name] [Discord Channel Name or Id]")]
         public async Task Enable(CommandContext context)
         {
             Logger.Console.LogCommand("Enable", context);
@@ -43,11 +43,26 @@ namespace QuestionBot.Discord.Commands
                     return;
                 }
 
+                var gotId = false;
                 var twitchChannelName = arguments[1];
                 ulong discordChannelId;
-                if (!ulong.TryParse(arguments[2], out discordChannelId))
+                if (ulong.TryParse(arguments[2], out discordChannelId))
+                    gotId = true;
+
+                if (!gotId)
                 {
-                    await Logger.Console.ResponseLogAsync("Error. The provided ChannelId is not an id.", context);
+                    var allGuildChannels = context.Guild.Channels;
+                    var channel = allGuildChannels.SingleOrDefault(c => c.Name.ToLower().Trim() == arguments[2].ToLower().Trim());
+                    if (channel != null)
+                    {
+                        discordChannelId = channel.Id;
+                        gotId = true;
+                    }
+                }
+
+                if (!gotId)
+                {
+                    await Logger.Console.ResponseLogAsync("Error. The provided Channel is not a channel or ChannelId.", context);
                     return;
                 }
 
@@ -55,7 +70,7 @@ namespace QuestionBot.Discord.Commands
                 var potentialStreamer = _streamer.Items.SingleOrDefault(s => s.DiscordId == context.User.Id);
                 if (potentialStreamer != null)
                 {
-                    await Logger.Console.ResponseLogAsync($"You already enabled QuestionBot with the following values: [ TwitchChannelName:{potentialStreamer.TwitchChannelName} ] [ DiscordChannel:{potentialStreamer.DiscordChannel} ]", context);
+                    await Logger.Console.ResponseLogAsync($"You already enabled QuestionBot with the following values: [ TwitchChannelName: {potentialStreamer.TwitchChannelName} ] [ DiscordChannel: {potentialStreamer.DiscordChannel} ]", context);
                     return;
                 }
 

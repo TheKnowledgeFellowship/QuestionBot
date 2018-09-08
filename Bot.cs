@@ -67,6 +67,6 @@ namespace QuestionBot
             await _discordClient.SendMessageAsync(streamer.DiscordChannel, question.ToString());
         }
 
-        private async void HandleQuestionBotEnabled(object sender, Discord.QuestionBotEnabledArgs e) => await StreamerInitAsync(e.Streamer);
+        private async void HandleQuestionBotEnabled(object sender, Discord.QuestionBotEnabledArgs e) => await StreamerInitAsync(e.Streamer, true);
     }
 }
