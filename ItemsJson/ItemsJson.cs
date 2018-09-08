@@ -97,6 +97,20 @@ namespace QuestionBot.ItemsJson
             return false;
         }
 
+        public void RemoveAll()
+        {
+            Items = new List<T>();
+            _currentId = 0;
+            SaveItems();
+        }
+
+        public async Task RemoveAllAsync()
+        {
+            Items = new List<T>();
+            _currentId = 0;
+            await SaveItemsAsync();
+        }
+
         public T GetItem(long id) => Items.SingleOrDefault(i => i.Id == id);
 
         public bool UpdateItem(long id, T newItem)

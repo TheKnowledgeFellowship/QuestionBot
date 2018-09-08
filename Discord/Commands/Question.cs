@@ -232,6 +232,23 @@ namespace QuestionBot.Discord.Commands
             await Logger.Console.ResponseLogAsync(response, context);
         }
 
+        [Command("RemoveAll"), Aliases("ra"), Description("Removes all questions.")]
+        public async Task RemoveAll(CommandContext context)
+        {
+            Logger.Console.LogCommand("RemoveAll", context);
+
+            var id = context.User.Id;
+
+            if (!IsStreamerWithQuestions(id))
+            {
+                await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
+                return;
+            }
+
+            _questions[id].RemoveAll();
+            await Logger.Console.ResponseLogAsync("All questions got removed.", context);
+        }
+
         private bool IsStreamerWithQuestions(ulong id) => _questions.Keys.Any(k => k == id);
     }
 }
