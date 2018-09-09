@@ -25,5 +25,6 @@ namespace QuestionBot.Models
         public string TwitchChannelName { get; set; }
         public string TwitchClientId { get; set; } = null;
         public QuestionRecognitionMode QuestionRecognitionMode { get; set; } = QuestionRecognitionMode.Both;
+        public char TwitchCommandPrefix { get; set; } = '!';
     }
 }

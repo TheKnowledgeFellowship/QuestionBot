@@ -30,6 +30,12 @@ namespace QuestionBot.Discord.Commands
                 return;
             }
 
+            if (context.RawArgumentString == null)
+            {
+                await Logger.Console.ResponseLogAsync("You didn't provide enough arguments. Command usage: `!srm [byKeywords / byCommand / both]`", context);
+                return;
+            }
+
             var arguments = context.RawArgumentString.Split(" ");
             if (arguments.Count() < 2)
             {
@@ -58,6 +64,45 @@ namespace QuestionBot.Discord.Commands
 
             streamer.QuestionRecognitionMode = recognitionMode;
             await Logger.Console.ResponseLogAsync($"You successfully set the question recognition mode to {recognitionMode}", context);
+        }
+
+        [Command("SetTwitchCommandPrefix"), Aliases("stcp"), Description("With this command you can set the prefix of the twitch command to another character. The prefix is '!' by default. Usage: `!stcp [character]`")]
+        public async Task SetTwitchCommandPrefix(CommandContext context)
+        {
+            Logger.Console.LogCommand("SetTwitchCommandPrefix", context);
+
+            var id = context.User.Id;
+            var streamer = _streamer.Items.SingleOrDefault(s => s.DiscordId == id);
+
+            if (streamer == null)
+            {
+                await Logger.Console.ResponseLogAsync("Sorry, only enabled streamers can use this command.", context);
+                return;
+            }
+
+            if (context.RawArgumentString == null)
+            {
+                await Logger.Console.ResponseLogAsync("You didn't provide enough arguments. Command usage: `!stcp [character]`", context);
+                return;
+            }
+
+            var arguments = context.RawArgumentString.Split(" ");
+            if (arguments.Count() < 2)
+            {
+                await Logger.Console.ResponseLogAsync("You didn't provide enough arguments. Command usage: `!stcp [character]`", context);
+                return;
+            }
+
+            var argument = arguments[1].Trim();
+            char prefix;
+            if (!char.TryParse(argument, out prefix))
+            {
+                await Logger.Console.ResponseLogAsync("The prefix you provided can't be read. Please make sure it's only one character.", context);
+                return;
+            }
+
+            streamer.TwitchCommandPrefix = prefix;
+            await Logger.Console.ResponseLogAsync($"You successfully set the twitch command prefix to {prefix}", context);
         }
     }
 }

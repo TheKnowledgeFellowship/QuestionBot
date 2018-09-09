@@ -78,6 +78,12 @@ namespace QuestionBot.Discord.Commands
                 return;
             }
 
+            if (context.RawArgumentString == null)
+            {
+                await Logger.Console.ResponseLogAsync($"Please provide the id of the question you want to mark as answered.", context);
+                return;
+            }
+
             var arguments = context.RawArgumentString.Split(" ");
             if (arguments.Count() < 2)
             {
@@ -115,6 +121,12 @@ namespace QuestionBot.Discord.Commands
             if (!IsStreamerWithQuestions(id))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
+                return;
+            }
+
+            if (context.RawArgumentString == null)
+            {
+                await Logger.Console.ResponseLogAsync($"Please provide the id of the question you want to mark as unanswered.", context);
                 return;
             }
 
@@ -158,6 +170,12 @@ namespace QuestionBot.Discord.Commands
                 return;
             }
 
+            if (context.RawArgumentString == null)
+            {
+                await Logger.Console.ResponseLogAsync($"Please provide the id of the question you want to print out.", context);
+                return;
+            }
+
             var arguments = context.RawArgumentString.Split(" ");
             if (arguments.Count() < 2)
             {
@@ -196,6 +214,12 @@ namespace QuestionBot.Discord.Commands
             if (!IsStreamerWithQuestions(id))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
+                return;
+            }
+
+            if (context.RawArgumentString == null)
+            {
+                await Logger.Console.ResponseLogAsync($"Please provide the number of hours you want to target.", context);
                 return;
             }
 

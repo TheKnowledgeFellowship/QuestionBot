@@ -35,6 +35,12 @@ namespace QuestionBot.Discord.Commands
             }
             else
             {
+                if (context.RawArgumentString == null)
+                {
+                    await Logger.Console.ResponseLogAsync("Error. You did not provide enough arguments.", context);
+                    return;
+                }
+
                 var arguments = context.RawArgumentString.Split(" ");
 
                 if (arguments.Count() < 3)
@@ -91,19 +97,32 @@ namespace QuestionBot.Discord.Commands
             }
             else
             {
-                var arguments = context.RawArgumentString.Split(" ");
-                ulong output;
-
-                if (ulong.TryParse(arguments[1], out output))
+                if (context.RawArgumentString == null)
                 {
-                    if (_permittedStreamerIds.Items.Exists(psi => psi.DiscordId == output))
+                    await Logger.Console.ResponseLogAsync("You did not provide enough arguments.", context);
+                    return;
+                }
+
+                var arguments = context.RawArgumentString.Split(" ");
+
+                if (arguments.Count() < 2)
+                {
+                    await Logger.Console.ResponseLogAsync("You did not provide enough arguments.", context);
+                    return;
+                }
+
+                ulong id;
+
+                if (ulong.TryParse(arguments[1], out id))
+                {
+                    if (_permittedStreamerIds.Items.Exists(psi => psi.DiscordId == id))
                     {
-                        await Logger.Console.ResponseLogAsync($"The id {output} is already in the permitted streamer ids.", context);
+                        await Logger.Console.ResponseLogAsync($"The id {id} is already in the permitted streamer ids.", context);
                         return;
                     }
 
-                    await _permittedStreamerIds.AddItemAsync(new StreamerId(output));
-                    await Logger.Console.ResponseLogAsync($"You successfully added {output} to the permitted streamer ids.", context);
+                    await _permittedStreamerIds.AddItemAsync(new StreamerId(id));
+                    await Logger.Console.ResponseLogAsync($"You successfully added {id} to the permitted streamer ids.", context);
                     return;
                 }
 
@@ -122,7 +141,20 @@ namespace QuestionBot.Discord.Commands
             }
             else
             {
+                if (context.RawArgumentString == null)
+                {
+                    await Logger.Console.ResponseLogAsync("You did not provide enough arguments.", context);
+                    return;
+                }
+
                 var arguments = context.RawArgumentString.Split(" ");
+
+                if (arguments.Count() < 2)
+                {
+                    await Logger.Console.ResponseLogAsync("You did not provide enough arguments.", context);
+                    return;
+                }
+
                 ulong id;
 
                 if (ulong.TryParse(arguments[1], out id))

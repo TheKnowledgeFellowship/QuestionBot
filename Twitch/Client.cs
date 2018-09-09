@@ -69,9 +69,10 @@ namespace QuestionBot.Twitch
         private void HandleMessageReceived(object sender, OnMessageReceivedArgs e)
         {
             var message = e.ChatMessage.Message.ToLower();
-            var isQuestion = false;
             var byKeywords = (_streamer.QuestionRecognitionMode == QuestionRecognitionMode.ByKeywords || _streamer.QuestionRecognitionMode == QuestionRecognitionMode.Both);
             var byCommand = (_streamer.QuestionRecognitionMode == QuestionRecognitionMode.ByCommand || _streamer.QuestionRecognitionMode == QuestionRecognitionMode.Both);
+
+            var isQuestion = false;
 
             if ((message.Contains("?")
             || message.Contains("question")
@@ -82,7 +83,8 @@ namespace QuestionBot.Twitch
             && byKeywords)
                 isQuestion = true;
 
-            if ((message.Contains("!q ") || message.Contains("!question ")) && byCommand)
+            var commandPrefix = _streamer.TwitchCommandPrefix;
+            if ((message.Contains($"{commandPrefix}q ") || message.Contains($"{commandPrefix}question ")) && byCommand)
                 isQuestion = true;
 
             if (isQuestion)
