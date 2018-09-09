@@ -15,4 +15,9 @@ namespace QuestionBot.Discord
     {
         internal Dictionary<ulong, ItemsJson<Question>> Questions { get; set; }
     }
+
+    public class ConfigurationDependencies
+    {
+        internal ItemsJson<Streamer> Streamer { get; set; }
+    }
 }

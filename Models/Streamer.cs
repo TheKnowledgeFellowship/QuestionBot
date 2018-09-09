@@ -3,6 +3,13 @@ using QuestionBot.ItemsJson;
 
 namespace QuestionBot.Models
 {
+    public enum QuestionRecognitionMode
+    {
+        ByCommand,
+        ByKeywords,
+        Both
+    }
+
     public class Streamer : IIdentifier
     {
         public Streamer(ulong discordId, ulong discordChannel, string twitchChannelName)
@@ -17,5 +24,6 @@ namespace QuestionBot.Models
         public ulong DiscordChannel { get; set; }
         public string TwitchChannelName { get; set; }
         public string TwitchClientId { get; set; } = null;
+        public QuestionRecognitionMode QuestionRecognitionMode { get; set; } = QuestionRecognitionMode.Both;
     }
 }

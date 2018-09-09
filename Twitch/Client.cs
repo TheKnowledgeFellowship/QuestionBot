@@ -70,16 +70,19 @@ namespace QuestionBot.Twitch
         {
             var message = e.ChatMessage.Message.ToLower();
             var isQuestion = false;
+            var byKeywords = (_streamer.QuestionRecognitionMode == QuestionRecognitionMode.ByKeywords || _streamer.QuestionRecognitionMode == QuestionRecognitionMode.Both);
+            var byCommand = (_streamer.QuestionRecognitionMode == QuestionRecognitionMode.ByCommand || _streamer.QuestionRecognitionMode == QuestionRecognitionMode.Both);
 
             if ((message.Contains("?")
             || message.Contains("question")
             || message.Contains("❓")
             || message.Contains("❔")
             || message.Contains("⁉"))
-            && message.Contains(_channelName.ToLower()))
+            && message.Contains(_channelName.ToLower())
+            && byKeywords)
                 isQuestion = true;
 
-            if (message.Contains("!q"))
+            if ((message.Contains("!q ") || message.Contains("!question ")) && byCommand)
                 isQuestion = true;
 
             if (isQuestion)

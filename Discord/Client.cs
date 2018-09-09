@@ -43,6 +43,10 @@ namespace QuestionBot.Discord
                 {
                     Questions = questions
                 });
+                d.AddInstance(new ConfigurationDependencies()
+                {
+                    Streamer = _streamer
+                });
                 dep = d.Build();
             }
 
@@ -55,6 +59,7 @@ namespace QuestionBot.Discord
 
             _commands.RegisterCommands<Commands.General>();
             _commands.RegisterCommands<Commands.Question>();
+            _commands.RegisterCommands<Commands.Configuration>();
         }
 
         public async Task ConnectAsync()
