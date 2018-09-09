@@ -11,7 +11,7 @@ namespace QuestionBot
         private Discord.Client _discordClient;
         private ItemsJson<Streamer> _streamer;
         private Twitch.Api _twitchApi;
-        private List<Twitch.Client> _twitchClients = new List<Twitch.Client>();
+        private Dictionary<ulong, Twitch.Client> _twitchClients = new Dictionary<ulong, Twitch.Client>();
         private Dictionary<ulong, ItemsJson<Question>> _questions = new Dictionary<ulong, ItemsJson<Question>>();
 
         public Bot()
@@ -42,7 +42,7 @@ namespace QuestionBot
             var client = new Twitch.Client(streamer.TwitchChannelName, streamer);
             client.Connect();
             client.QuestionReceived += HandleQuestionReceivedAsync;
-            _twitchClients.Add(client);
+            _twitchClients.Add(streamer.DiscordId, client);
 
             var questions = new ItemsJson<Question>($"Questions{streamer.DiscordId}.json");
             _questions.Add(streamer.DiscordId, questions);
@@ -74,12 +74,21 @@ namespace QuestionBot
         {
             var id = e.StreamerId;
 
+            if (_twitchClients.Keys.Contains(id))
+            {
+                _twitchClients[id].Disconnect();
+                _twitchClients.Remove(id);
+            }
+
             var storedStreamer = _streamer.Items.SingleOrDefault(s => s.DiscordId == id);
             if (storedStreamer != null)
                 await _streamer.RemoveItemAsync(storedStreamer.Id);
 
-            _questions[id].Purge();
-            _questions.Remove(id);
+            if (_questions.Keys.Contains(id))
+            {
+                _questions[id].Purge();
+                _questions.Remove(id);
+            }
         }
     }
 }
