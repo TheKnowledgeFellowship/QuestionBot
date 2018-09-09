@@ -65,7 +65,7 @@ namespace QuestionBot
 
             var questionId = await _questions[streamer.DiscordId].AddItemAsync(question);
             question.Id = questionId;
-            await _discordClient.SendMessageAsync(streamer.DiscordChannel, question.ToString());
+            await _discordClient.SendMessageAsync(streamer.DiscordChannel, question.ToLightMarkdownString());
         }
 
         private async void HandleQuestionBotEnabled(object sender, Discord.QuestionBotEnabledArgs e) => await StreamerInitAsync(e.Streamer, true);

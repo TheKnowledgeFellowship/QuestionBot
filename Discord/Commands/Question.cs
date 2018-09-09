@@ -34,7 +34,7 @@ namespace QuestionBot.Discord.Commands
             foreach (var question in _questions[id].Items)
             {
                 if (!question.Answered)
-                    response += $"{question.ToString()}\n";
+                    response += $"{question.ToMarkdownString()}\n";
             }
 
             await Logger.Console.ResponseLogAsync(response, context);
@@ -57,9 +57,9 @@ namespace QuestionBot.Discord.Commands
             foreach (var question in _questions[id].Items)
             {
                 if (!question.Answered)
-                    response += $"{question.ToString()}\n";
+                    response += $"{question.ToMarkdownString()}\n";
                 else
-                    response += $"{question.ToString()} [answered]\n";
+                    response += $"{question.ToMarkdownString()} *answered*\n";
             }
 
             await Logger.Console.ResponseLogAsync(response, context);
@@ -180,7 +180,10 @@ namespace QuestionBot.Discord.Commands
                 return;
             }
 
-            await Logger.Console.ResponseLogAsync(question.ToString(), context);
+            if (!question.Answered)
+                await Logger.Console.ResponseLogAsync(question.ToMarkdownString(), context);
+            else
+                await Logger.Console.ResponseLogAsync($"{question.ToMarkdownString()} *answered*", context);
         }
 
         [Command("LastHours"), Aliases("lh"), Description("Prints all questions, that got asked in the last X hours. X gets specified by you.")]
@@ -224,9 +227,9 @@ namespace QuestionBot.Discord.Commands
             foreach (var question in questions)
             {
                 if (!question.Answered)
-                    response += $"{question.ToString()}\n";
+                    response += $"{question.ToMarkdownString()}\n";
                 else
-                    response += $"{question.ToString()} [answered]\n";
+                    response += $"{question.ToMarkdownString()} *answered*\n";
             }
 
             await Logger.Console.ResponseLogAsync(response, context);

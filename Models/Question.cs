@@ -22,5 +22,9 @@ namespace QuestionBot.Models
         public bool WhileLive { get; set; } = false;
 
         public override string ToString() => $"[{Time.ToString("s")}] {Author} asked \"{Content}\" #{Id}";
+
+        public string ToMarkdownString() => $"[{Time.ToString("s")}] **{Author}** asked **\"{Content}\"** #{Id}";
+
+        public string ToLightMarkdownString() => $"**{Author}** asked **\"{Content}\"** #{Id}";
     }
 }
