@@ -63,6 +63,7 @@ namespace QuestionBot.Discord.Commands
             }
 
             streamer.QuestionRecognitionMode = recognitionMode;
+            await _streamer.UpdateItemAsync(streamer.Id, streamer);
             await Logger.Console.ResponseLogAsync($"You successfully set the question recognition mode to {recognitionMode}", context);
         }
 
@@ -102,6 +103,7 @@ namespace QuestionBot.Discord.Commands
             }
 
             streamer.TwitchCommandPrefix = prefix;
+            await _streamer.UpdateItemAsync(streamer.Id, streamer);
             await Logger.Console.ResponseLogAsync($"You successfully set the twitch command prefix to {prefix}", context);
         }
     }
