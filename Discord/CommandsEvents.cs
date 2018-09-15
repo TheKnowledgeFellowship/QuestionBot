@@ -12,9 +12,9 @@ namespace QuestionBot.Discord
 
     public class RemoveStreamerArgs
     {
-        public ulong StreamerId { get; set; }
+        public ulong DiscordId { get; set; }
 
-        public RemoveStreamerArgs(ulong streamerId) => this.StreamerId = streamerId;
+        public RemoveStreamerArgs(ulong discordId) => this.DiscordId = discordId;
     }
 
     public class CommandsEvents

@@ -89,7 +89,7 @@ namespace QuestionBot.Twitch
 
             if (isQuestion)
             {
-                OnQuestionReceived(new Question(_streamer.DiscordId, e.ChatMessage.Message, e.ChatMessage.DisplayName, DateTime.Now));
+                OnQuestionReceived(new Question(e.ChatMessage.Message, e.ChatMessage.DisplayName, DateTime.Now, _streamer.Id));
                 Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Question received: \"{e.ChatMessage.Message}\"");
                 SendMessage($"@{e.ChatMessage.DisplayName} your question got recognized.");
             }

@@ -1,30 +1,33 @@
 using System;
-using QuestionBot.ItemsJson;
 
 namespace QuestionBot.Models
 {
-    public class Question : IIdentifier
+    public class Question
     {
-        public Question(ulong streamerId, string content, string author, DateTime time)
+        public Question(string content, string author, DateTime time, int streamerId)
         {
-            this.StreamerId = streamerId;
             this.Content = content;
             this.Author = author;
             this.Time = time;
+            this.StreamerId = streamerId;
         }
 
-        public long Id { get; set; } = 0;
-        public ulong StreamerId { get; set; }
+        public int Id { get; set; }
+
+        public int ReadableId { get; set; }
         public string Content { get; set; }
         public string Author { get; set; }
         public DateTime Time { get; set; }
         public bool Answered { get; set; } = false;
         public bool WhileLive { get; set; } = false;
 
-        public override string ToString() => $"[{Time.ToString("s")}] {Author} asked \"{Content}\" #{Id}";
+        public int StreamerId { get; set; }
+        public Streamer Streamer { get; set; }
 
-        public string ToMarkdownString() => $"[{Time.ToString("s")}] **{Author}** asked **\"{Content}\"** #{Id}";
+        public override string ToString() => $"[{Time.ToString("s")}] {Author} asked \"{Content}\" #{ReadableId}";
 
-        public string ToLightMarkdownString() => $"**{Author}** asked **\"{Content}\"** #{Id}";
+        public string ToMarkdownString() => $"[{Time.ToString("s")}] **{Author}** asked **\"{Content}\"** #{ReadableId}";
+
+        public string ToLightMarkdownString() => $"**{Author}** asked **\"{Content}\"** #{ReadableId}";
     }
 }

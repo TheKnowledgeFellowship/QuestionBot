@@ -1,5 +1,5 @@
 using System;
-using QuestionBot.ItemsJson;
+using System.Collections.Generic;
 
 namespace QuestionBot.Models
 {
@@ -10,7 +10,7 @@ namespace QuestionBot.Models
         Both
     }
 
-    public class Streamer : IIdentifier
+    public class Streamer
     {
         public Streamer(ulong discordId, ulong discordChannel, string twitchChannelName)
         {
@@ -19,12 +19,14 @@ namespace QuestionBot.Models
             this.TwitchChannelName = twitchChannelName;
         }
 
-        public long Id { get; set; }
+        public int Id { get; set; }
         public ulong DiscordId { get; set; }
         public ulong DiscordChannel { get; set; }
         public string TwitchChannelName { get; set; }
-        public string TwitchClientId { get; set; } = null;
+        public string TwitchClientId { get; set; }
         public QuestionRecognitionMode QuestionRecognitionMode { get; set; } = QuestionRecognitionMode.Both;
         public char TwitchCommandPrefix { get; set; } = '!';
+
+        public List<Question> Questions { get; set; }
     }
 }

@@ -4,39 +4,37 @@ using System.Linq;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using QuestionBot.ItemsJson;
 
 namespace QuestionBot.Discord.Commands
 {
     public class Question
     {
-        private Dictionary<ulong, ItemsJson<Models.Question>> _questions;
-
-        public Question(QuestionDependencies dep)
-        {
-            _questions = dep.Questions;
-        }
+        public Question() { }
 
         [Command("PrintQuestions"), Aliases("pq"), Description("Prints out all unanswered questions.")]
         public async Task PrintQuestions(CommandContext context)
         {
             Logger.Console.LogCommand("PrintQuestions", context);
 
-            var id = context.User.Id;
+            var discordId = context.User.Id;
 
-            if (!IsStreamerWithQuestions(id))
+            if (!IsStreamerWithQuestions(discordId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
             var response = "All unanswered questions:\n";
-            foreach (var question in _questions[id].Items)
+            using (var db = new CuriosityContext())
             {
-                if (!question.Answered)
-                    response += $"{question.ToMarkdownString()}\n";
-            }
+                var questions = db.Questions.Where(q => q.Streamer.DiscordId == discordId);
 
+                foreach (var question in questions)
+                {
+                    if (!question.Answered)
+                        response += $"{question.ToMarkdownString()}\n";
+                }
+            }
             await Logger.Console.ResponseLogAsync(response, context);
         }
 
@@ -45,21 +43,26 @@ namespace QuestionBot.Discord.Commands
         {
             Logger.Console.LogCommand("PrintAllQuestions", context);
 
-            var id = context.User.Id;
+            var discordId = context.User.Id;
 
-            if (!IsStreamerWithQuestions(id))
+            if (!IsStreamerWithQuestions(discordId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
             var response = "All questions:\n";
-            foreach (var question in _questions[id].Items)
+            using (var db = new CuriosityContext())
             {
-                if (!question.Answered)
-                    response += $"{question.ToMarkdownString()}\n";
-                else
-                    response += $"{question.ToMarkdownString()} *answered*\n";
+                var questions = db.Questions.Where(q => q.Streamer.DiscordId == discordId);
+
+                foreach (var question in questions)
+                {
+                    if (!question.Answered)
+                        response += $"{question.ToMarkdownString()}\n";
+                    else
+                        response += $"{question.ToMarkdownString()} *answered*\n";
+                }
             }
 
             await Logger.Console.ResponseLogAsync(response, context);
@@ -70,9 +73,9 @@ namespace QuestionBot.Discord.Commands
         {
             Logger.Console.LogCommand("Answered", context);
 
-            var id = context.User.Id;
+            var discordId = context.User.Id;
 
-            if (!IsStreamerWithQuestions(id))
+            if (!IsStreamerWithQuestions(discordId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
@@ -91,24 +94,28 @@ namespace QuestionBot.Discord.Commands
                 return;
             }
 
-            long questionId;
-            if (!long.TryParse(arguments[1], out questionId))
+            int questionId;
+            if (!int.TryParse(arguments[1], out questionId))
             {
                 await Logger.Console.ResponseLogAsync($"The Id you provided can't be read.", context);
                 return;
             }
 
-            var question = _questions[id].Items.SingleOrDefault(q => q.Id == questionId);
-
-            if (question == null)
+            if (!QuestionExists(discordId, questionId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, no question with the specified Id could be found.", context);
                 return;
             }
 
-            question.Answered = true;
-            await _questions[id].UpdateItemAsync(question.Id, question);
-            await Logger.Console.ResponseLogAsync($"Question #{question.Id} has been marked as answered.", context);
+            using (var db = new CuriosityContext())
+            {
+                var question = db.Questions
+                    .Where(q => q.Streamer.DiscordId == discordId)
+                    .Single(q => q.ReadableId == questionId);
+                question.Answered = true;
+                await db.SaveChangesAsync();
+            }
+            await Logger.Console.ResponseLogAsync($"Question #{questionId} has been marked as answered.", context);
         }
 
         [Command("Unanswered"), Aliases("u"), Description("Marks a question as unanswered.")]
@@ -116,9 +123,9 @@ namespace QuestionBot.Discord.Commands
         {
             Logger.Console.LogCommand("Unanswered", context);
 
-            var id = context.User.Id;
+            var discordId = context.User.Id;
 
-            if (!IsStreamerWithQuestions(id))
+            if (!IsStreamerWithQuestions(discordId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
@@ -137,24 +144,28 @@ namespace QuestionBot.Discord.Commands
                 return;
             }
 
-            long questionId;
-            if (!long.TryParse(arguments[1], out questionId))
+            int questionId;
+            if (!int.TryParse(arguments[1], out questionId))
             {
                 await Logger.Console.ResponseLogAsync($"The Id you provided can't be read.", context);
                 return;
             }
 
-            var question = _questions[id].Items.SingleOrDefault(q => q.Id == questionId);
-
-            if (question == null)
+            if (!QuestionExists(discordId, questionId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, no question with the specified Id could be found.", context);
                 return;
             }
 
-            question.Answered = false;
-            await _questions[id].UpdateItemAsync(question.Id, question);
-            await Logger.Console.ResponseLogAsync($"Question #{question.Id} has been marked as unanswered.", context);
+            using (var db = new CuriosityContext())
+            {
+                var question = db.Questions
+                    .Where(q => q.Streamer.DiscordId == discordId)
+                    .Single(q => q.ReadableId == questionId);
+                question.Answered = false;
+                await db.SaveChangesAsync();
+            }
+            await Logger.Console.ResponseLogAsync($"Question #{questionId} has been marked as unanswered.", context);
         }
 
         [Command("Print"), Aliases("p"), Description("Prints a question.")]
@@ -162,9 +173,9 @@ namespace QuestionBot.Discord.Commands
         {
             Logger.Console.LogCommand("Print", context);
 
-            var id = context.User.Id;
+            var discordId = context.User.Id;
 
-            if (!IsStreamerWithQuestions(id))
+            if (!IsStreamerWithQuestions(discordId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
@@ -183,25 +194,32 @@ namespace QuestionBot.Discord.Commands
                 return;
             }
 
-            long questionId;
-            if (!long.TryParse(arguments[1], out questionId))
+            int questionId;
+            if (!int.TryParse(arguments[1], out questionId))
             {
                 await Logger.Console.ResponseLogAsync($"The Id you provided can't be read.", context);
                 return;
             }
 
-            var question = _questions[id].Items.SingleOrDefault(q => q.Id == questionId);
-
-            if (question == null)
+            if (!QuestionExists(discordId, questionId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, no question with the specified Id could be found.", context);
                 return;
             }
 
-            if (!question.Answered)
-                await Logger.Console.ResponseLogAsync(question.ToMarkdownString(), context);
-            else
-                await Logger.Console.ResponseLogAsync($"{question.ToMarkdownString()} *answered*", context);
+            var response = "";
+            using (var db = new CuriosityContext())
+            {
+                var question = db.Questions
+                    .Where(q => q.Streamer.DiscordId == discordId)
+                    .Single(q => q.ReadableId == questionId);
+                if (!question.Answered)
+                    response = question.ToMarkdownString();
+                else
+                    response = $"{question.ToMarkdownString()} *answered*";
+            }
+
+            await Logger.Console.ResponseLogAsync(response, context);
         }
 
         [Command("LastHours"), Aliases("lh"), Description("Prints all questions, that got asked in the last X hours. X gets specified by you.")]
@@ -209,9 +227,9 @@ namespace QuestionBot.Discord.Commands
         {
             Logger.Console.LogCommand("LastHours", context);
 
-            var id = context.User.Id;
+            var discordId = context.User.Id;
 
-            if (!IsStreamerWithQuestions(id))
+            if (!IsStreamerWithQuestions(discordId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
@@ -239,21 +257,34 @@ namespace QuestionBot.Discord.Commands
 
             var limit = DateTime.Now - TimeSpan.FromHours(hours);
 
-            var questions = _questions[id].Items.Where(h => h.Time > limit);
+            var questionsExist = false;
+            using (var db = new CuriosityContext())
+            {
+                questionsExist = db.Questions
+                    .Where(q => q.Streamer.DiscordId == discordId)
+                    .Any(q => q.Time > limit);
+            }
 
-            if (questions.Count() == 0)
+            if (questionsExist)
             {
                 await Logger.Console.ResponseLogAsync($"There are no questions, that got asked in the last {hours} hours.", context);
                 return;
             }
 
             var response = $"All questions of the last {hours} hours:\n";
-            foreach (var question in questions)
+            using (var db = new CuriosityContext())
             {
-                if (!question.Answered)
-                    response += $"{question.ToMarkdownString()}\n";
-                else
-                    response += $"{question.ToMarkdownString()} *answered*\n";
+                var questions = db.Questions
+                    .Where(q => q.Streamer.DiscordId == discordId)
+                    .Where(q => q.Time > limit);
+
+                foreach (var question in questions)
+                {
+                    if (!question.Answered)
+                        response += $"{question.ToMarkdownString()}\n";
+                    else
+                        response += $"{question.ToMarkdownString()} *answered*\n";
+                }
             }
 
             await Logger.Console.ResponseLogAsync(response, context);
@@ -264,18 +295,49 @@ namespace QuestionBot.Discord.Commands
         {
             Logger.Console.LogCommand("RemoveAll", context);
 
-            var id = context.User.Id;
+            var discordId = context.User.Id;
 
-            if (!IsStreamerWithQuestions(id))
+            if (!IsStreamerWithQuestions(discordId))
             {
                 await Logger.Console.ResponseLogAsync($"Sorry, you aren't a registered streamer that got any questions.", context);
                 return;
             }
 
-            _questions[id].RemoveAll();
+            using (var db = new CuriosityContext())
+            {
+                var questions = db.Questions
+                    .Where(q => q.Streamer.DiscordId == discordId);
+                db.RemoveRange(questions);
+                await db.SaveChangesAsync();
+            }
+
             await Logger.Console.ResponseLogAsync("All questions got removed.", context);
         }
 
-        private bool IsStreamerWithQuestions(ulong id) => _questions.Keys.Any(k => k == id);
+        private bool IsStreamerWithQuestions(ulong discordId)
+        {
+            var isStreamerWithQuestions = false;
+            using (var db = new CuriosityContext())
+            {
+                isStreamerWithQuestions = db.Questions
+                    .Where(q => q.Streamer.DiscordId == discordId)
+                    .Any();
+            }
+
+            return isStreamerWithQuestions;
+        }
+
+        public bool QuestionExists(ulong discordId, int questionId)
+        {
+            var questionExists = false;
+            using (var db = new CuriosityContext())
+            {
+                questionExists = db.Questions
+                    .Where(q => q.Streamer.DiscordId == discordId)
+                    .Any(q => q.ReadableId == questionId);
+            }
+
+            return questionExists;
+        }
     }
 }

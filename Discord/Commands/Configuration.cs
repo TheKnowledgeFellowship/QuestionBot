@@ -2,29 +2,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using QuestionBot.ItemsJson;
 using QuestionBot.Models;
 
 namespace QuestionBot.Discord.Commands
 {
     public class Configuration
     {
-        private ItemsJson<Streamer> _streamer;
-
-        public Configuration(ConfigurationDependencies dep)
-        {
-            _streamer = dep.Streamer;
-        }
+        public Configuration() { }
 
         [Command("SetRecognitionMode"), Aliases("srm"), Description("With this command you can set, how QuestionBot recognises questions. You have the following options: byKeywords, byCommand, both. Usage: `!srm [byKeywords / byCommand / both]")]
         public async Task SetRecognitionMode(CommandContext context)
         {
             Logger.Console.LogCommand("SetRecognitionMode", context);
 
-            var id = context.User.Id;
-            var streamer = _streamer.Items.SingleOrDefault(s => s.DiscordId == id);
+            var discordId = context.User.Id;
 
-            if (streamer == null)
+            if (StreamerExists(discordId))
             {
                 await Logger.Console.ResponseLogAsync("Sorry, only enabled streamers can use this command.", context);
                 return;
@@ -62,8 +55,14 @@ namespace QuestionBot.Discord.Commands
                     return;
             }
 
-            streamer.QuestionRecognitionMode = recognitionMode;
-            await _streamer.UpdateItemAsync(streamer.Id, streamer);
+            using (var db = new CuriosityContext())
+            {
+                var streamer = db.Streamer
+                    .Single(s => s.DiscordId == discordId);
+                streamer.QuestionRecognitionMode = recognitionMode;
+                await db.SaveChangesAsync();
+            }
+
             await Logger.Console.ResponseLogAsync($"You successfully set the question recognition mode to {recognitionMode}", context);
         }
 
@@ -72,10 +71,9 @@ namespace QuestionBot.Discord.Commands
         {
             Logger.Console.LogCommand("SetTwitchCommandPrefix", context);
 
-            var id = context.User.Id;
-            var streamer = _streamer.Items.SingleOrDefault(s => s.DiscordId == id);
+            var discordId = context.User.Id;
 
-            if (streamer == null)
+            if (StreamerExists(discordId))
             {
                 await Logger.Console.ResponseLogAsync("Sorry, only enabled streamers can use this command.", context);
                 return;
@@ -102,9 +100,27 @@ namespace QuestionBot.Discord.Commands
                 return;
             }
 
-            streamer.TwitchCommandPrefix = prefix;
-            await _streamer.UpdateItemAsync(streamer.Id, streamer);
+            using (var db = new CuriosityContext())
+            {
+                var streamer = db.Streamer
+                    .Single(s => s.DiscordId == discordId);
+                streamer.TwitchCommandPrefix = prefix;
+                await db.SaveChangesAsync();
+            }
+
             await Logger.Console.ResponseLogAsync($"You successfully set the twitch command prefix to {prefix}", context);
+        }
+
+        public bool StreamerExists(ulong discordId)
+        {
+            var streamerExists = false;
+            using (var db = new CuriosityContext())
+            {
+                streamerExists = db.Streamer
+                    .Any(s => s.DiscordId == discordId);
+            }
+
+            return streamerExists;
         }
     }
 }

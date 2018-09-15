@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using QuestionBot.Discord.Commands;
-using QuestionBot.ItemsJson;
 using QuestionBot.Models;
 using System.Collections.Generic;
 
@@ -12,16 +11,11 @@ namespace QuestionBot.Discord
     {
         private DSharpPlus.DiscordClient _discord;
         private CommandsNextModule _commands;
-        private ItemsJson<StreamerId> _permittedStreamerIds;
-        private ItemsJson<Streamer> _streamer;
 
         public CommandsEvents CommandsEvents { get; private set; }
 
-        public Client(ItemsJson<Streamer> streamer, Dictionary<ulong, ItemsJson<Models.Question>> questions)
+        public Client()
         {
-            _permittedStreamerIds = new ItemsJson<StreamerId>("PermittedStreamerIds.json");
-            _streamer = streamer;
-
             var config = Config.Config.Load();
             _discord = new DSharpPlus.DiscordClient(new DiscordConfiguration()
             {
@@ -35,17 +29,7 @@ namespace QuestionBot.Discord
             {
                 d.AddInstance(new GeneralDependencies()
                 {
-                    PermittedStreamerIds = _permittedStreamerIds,
-                    Streamer = _streamer,
                     CommandsEvents = CommandsEvents
-                });
-                d.AddInstance(new QuestionDependencies()
-                {
-                    Questions = questions
-                });
-                d.AddInstance(new ConfigurationDependencies()
-                {
-                    Streamer = _streamer
                 });
                 dep = d.Build();
             }
