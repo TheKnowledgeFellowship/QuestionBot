@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DSharpPlus.EventArgs;
 using QuestionBot.CommandSystem.SpecialCommands;
 using QuestionBot.Models;
+using TwitchLib.Client.Events;
 
 namespace QuestionBot.CommandSystem
 {
@@ -89,21 +90,7 @@ namespace QuestionBot.CommandSystem
             if (await HandleSpecialCommandAsync(commandText, args, client))
                 return;
             // Check for IStreamerCommand.
-            IStreamerCommand targetedCommand = null;
-            foreach (var command in StreamerCommands)
-            {
-                if (Regex.IsMatch(commandText, command.Call, RegexOptions.IgnoreCase))
-                {
-                    if (targetedCommand != null)
-                    {
-                        if (targetedCommand.Name.Length < command.Name.Length)
-                            targetedCommand = command;
-                    }
-                    else
-                        targetedCommand = command;
-                }
-            }
-
+            IStreamerCommand targetedCommand = GetStreamerCommand(commandText);
             if (targetedCommand == null)
                 return;
 
@@ -132,12 +119,54 @@ namespace QuestionBot.CommandSystem
             await CommandShell.ExecuteStreamerCommandAsync(commandArguments, targetedCommand);
         }
 
+        public async Task HandleCommandAsync(string commandText, OnMessageReceivedArgs args, Twitch.Client client)
+        {
+            // Check for IStreamerCommand.
+            IStreamerCommand targetedCommand = GetStreamerCommand(commandText);
+            if (targetedCommand == null)
+                return;
+
+            Logger.Console.LogCommand(targetedCommand.Name, args);
+            var platformClient = new CommandSystem.PlatformClients.TwitchClient(client);
+
+            var messageByStreamer = args.ChatMessage.IsBroadcaster;
+            Streamer streamer;
+            using (var db = new CuriosityContext())
+                streamer = db.Streamer
+                    .SingleOrDefault(s => s.TwitchChannelName == args.ChatMessage.Channel);
+
+            var reachedPermissionLevel = PermissionLevel.everyone;
+            if (messageByStreamer)
+                reachedPermissionLevel = PermissionLevel.Streamer;
+
+            var commandArguments = new StreamerCommandArguments(commandText, platformClient, streamer, reachedPermissionLevel, Platform.Twitch);
+            await CommandShell.ExecuteStreamerCommandAsync(commandArguments, targetedCommand);
+        }
+
         protected virtual void OnRemoveStreamerCommandSuccess(ulong discordId) => RemoveStreamerCommandSuccess?.Invoke(this, new RemoveStreamerArgs(discordId));
         protected virtual void OnQuestionBotEnabledCommandSuccess(Streamer streamer) => QuestionBotEnabledCommandSuccess?.Invoke(this, new QuestionBotEnabledArgs(streamer));
 
         private void HandleRemoveStreamer(object sender, RemoveStreamerArgs args) => OnRemoveStreamerCommandSuccess(args.DiscordId);
         private void HandleQuestionBotEnabled(object sender, QuestionBotEnabledArgs args) => OnQuestionBotEnabledCommandSuccess(args.Streamer);
 
+        private IStreamerCommand GetStreamerCommand(string commandText)
+        {
+            IStreamerCommand streamerCommand = null;
+            foreach (var command in StreamerCommands)
+            {
+                if (Regex.IsMatch(commandText, command.Call, RegexOptions.IgnoreCase))
+                {
+                    if (streamerCommand != null)
+                    {
+                        if (streamerCommand.Name.Length < command.Name.Length)
+                            streamerCommand = command;
+                    }
+                    else
+                        streamerCommand = command;
+                }
+            }
+            return streamerCommand;
+        }
         // Discord only.
         private async Task<bool> HandleSpecialCommandAsync(string commandText, MessageCreateEventArgs messageArgs, Discord.Client client)
         {

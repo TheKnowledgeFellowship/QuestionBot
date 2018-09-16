@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using QuestionBot.CommandSystem;
 using QuestionBot.Models;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -22,12 +23,14 @@ namespace QuestionBot.Twitch
         private string _channelName;
         private TwitchClient _client;
         private Streamer _streamer;
+        private CommandManager _commandManager;
 
-        public Client(string channelName, Streamer streamer)
+        public Client(string channelName, Streamer streamer, CommandManager commandManager)
         {
             var config = Config.Config.Load();
             _channelName = channelName;
             _streamer = streamer;
+            _commandManager = commandManager;
             _credentials = new ConnectionCredentials(
                 twitchUsername: config.Twitch.Username,
                 twitchOAuth: config.Twitch.AccessToken
@@ -40,7 +43,7 @@ namespace QuestionBot.Twitch
         {
             _client = new TwitchClient();
             _client.Initialize(_credentials, _channelName);
-            _client.OnMessageReceived += HandleMessageReceived;
+            _client.OnMessageReceived += HandleMessageReceivedAsync;
             _client.OnConnected += (Object source, OnConnectedArgs e) => Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Connected.");
             _client.OnDisconnected += (Object source, OnDisconnectedArgs e) => Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Disconnected.", true);
             _client.OnConnectionError += (Object source, OnConnectionErrorArgs e) => Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Connection Error.", true);
@@ -67,9 +70,9 @@ namespace QuestionBot.Twitch
 
         protected virtual void OnQuestionReceived(Question question) => QuestionReceived?.Invoke(this, new QuestionReceivedArgs(question));
 
-        private void HandleMessageReceived(object sender, OnMessageReceivedArgs e)
+        private async void HandleMessageReceivedAsync(object sender, OnMessageReceivedArgs e)
         {
-            var message = e.ChatMessage.Message.ToLower();
+            var message = e.ChatMessage.Message.ToLower().Trim();
             Streamer streamer;
             using (var db = new CuriosityContext())
                 streamer = db.Streamer
@@ -99,6 +102,13 @@ namespace QuestionBot.Twitch
                 OnQuestionReceived(new Question(e.ChatMessage.Message, e.ChatMessage.DisplayName, DateTime.Now, _streamer.Id));
                 Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Question received: \"{e.ChatMessage.Message}\"");
                 SendMessage($"@{e.ChatMessage.DisplayName} your question got recognized.");
+                return;
+            }
+
+            if (message.StartsWith("!questionbot"))
+            {
+                var commandText = e.ChatMessage.Message.Remove(0, 12).Trim();
+                await _commandManager.HandleCommandAsync(commandText, e, this);
             }
         }
     }

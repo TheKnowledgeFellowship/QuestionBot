@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using DSharpPlus.EventArgs;
+using TwitchLib.Client.Events;
 
 namespace QuestionBot.Logger
 {
@@ -38,6 +39,18 @@ namespace QuestionBot.Logger
             logMessage += $"(message contents: \"{args.Message.Content}\") ";
 
             Log(Category.Discord, logMessage);
+        }
+
+        public static void LogCommand(string command, OnMessageReceivedArgs args)
+        {
+            var logMessage = "";
+
+            logMessage += $"Command: \"{command}\" ";
+            logMessage += $"triggerd by: \"{args.ChatMessage.Username}\" ";
+            logMessage += $"on: \"{args.ChatMessage.Channel}\" ";
+            logMessage += $"(message contents: \"{args.ChatMessage.Message}\") ";
+
+            Log(Category.Twitch, logMessage);
         }
     }
 }

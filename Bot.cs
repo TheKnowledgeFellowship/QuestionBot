@@ -40,7 +40,7 @@ namespace QuestionBot
         {
             streamer.TwitchClientId = await _twitchApi.GetChannelIdFromChannelName(streamer.TwitchChannelName);
 
-            var client = new Twitch.Client(streamer.TwitchChannelName, streamer);
+            var client = new Twitch.Client(streamer.TwitchChannelName, streamer, _commandManager);
             client.Connect();
             client.QuestionReceived += HandleQuestionReceivedAsync;
             _twitchClients.Add(streamer.DiscordId, client);
@@ -54,7 +54,7 @@ namespace QuestionBot
 
         private void StreamerInit(Streamer streamer)
         {
-            var client = new Twitch.Client(streamer.TwitchChannelName, streamer);
+            var client = new Twitch.Client(streamer.TwitchChannelName, streamer, _commandManager);
             client.Connect();
             client.QuestionReceived += HandleQuestionReceivedAsync;
             _twitchClients.Add(streamer.DiscordId, client);
