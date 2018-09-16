@@ -94,7 +94,8 @@ namespace QuestionBot.Twitch
                 isQuestion = true;
 
             var commandPrefix = streamer.TwitchCommandPrefix;
-            if ((message.Contains($"{commandPrefix}q ") || message.Contains($"{commandPrefix}question ")) && byCommand)
+            if ((message.StartsWith($"{commandPrefix}q ")
+                || message.StartsWith($"{commandPrefix}question ")) && byCommand)
                 isQuestion = true;
 
             if (isQuestion)
