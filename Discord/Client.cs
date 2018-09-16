@@ -1,20 +1,16 @@
 using System.Threading.Tasks;
 using DSharpPlus;
-using DSharpPlus.CommandsNext;
-using QuestionBot.Discord.Commands;
-using QuestionBot.Models;
-using System.Collections.Generic;
+using DSharpPlus.EventArgs;
+using QuestionBot.CommandSystem;
 
 namespace QuestionBot.Discord
 {
     public class Client
     {
         private DSharpPlus.DiscordClient _discord;
-        private CommandsNextModule _commands;
+        private CommandManager _commandManager;
 
-        public CommandsEvents CommandsEvents { get; private set; }
-
-        public Client()
+        public Client(CommandManager commandManager)
         {
             var config = Config.Config.Load();
             _discord = new DSharpPlus.DiscordClient(new DiscordConfiguration()
@@ -23,27 +19,8 @@ namespace QuestionBot.Discord
                 TokenType = TokenType.Bot
             });
 
-            CommandsEvents = new CommandsEvents();
-            DependencyCollection dep = null;
-            using (var d = new DependencyCollectionBuilder())
-            {
-                d.AddInstance(new GeneralDependencies()
-                {
-                    CommandsEvents = CommandsEvents
-                });
-                dep = d.Build();
-            }
-
-            _commands = _discord.UseCommandsNext(new CommandsNextConfiguration()
-            {
-                StringPrefix = "!",
-                CaseSensitive = false,
-                Dependencies = dep
-            });
-
-            _commands.RegisterCommands<Commands.General>();
-            _commands.RegisterCommands<Commands.Question>();
-            _commands.RegisterCommands<Commands.Configuration>();
+            _discord.MessageCreated += HandleMessageCreated;
+            _commandManager = commandManager;
         }
 
         public async Task ConnectAsync()
@@ -63,6 +40,16 @@ namespace QuestionBot.Discord
             var channel = await _discord.GetChannelAsync(channelId);
             await _discord.SendMessageAsync(channel, content);
             Logger.Console.Log(Logger.Category.Discord, $"Sent message in {channelId}: {content}");
+        }
+
+        public async Task HandleMessageCreated(MessageCreateEventArgs args)
+        {
+            var commandText = args.Message.Content.Trim();
+            if (commandText[0] == '!')
+            {
+                commandText = commandText.Remove(0, 1).Trim();
+                await _commandManager.HandleCommandAsync(commandText, args, this);
+            }
         }
     }
 }

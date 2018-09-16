@@ -1,23 +1,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using QuestionBot.CommandSystem;
+using QuestionBot.CommandSystem.SpecialCommands;
 using QuestionBot.Models;
 
 namespace QuestionBot
 {
     public class Bot
     {
+        private CommandManager _commandManager;
         private Discord.Client _discordClient;
         private Twitch.Api _twitchApi;
         private Dictionary<ulong, Twitch.Client> _twitchClients = new Dictionary<ulong, Twitch.Client>();
 
         public Bot()
         {
+            _commandManager = new CommandManager();
+            _discordClient = new Discord.Client(_commandManager);
             _twitchApi = new Twitch.Api();
-            _discordClient = new Discord.Client();
 
-            _discordClient.CommandsEvents.QuestionBotEnabled += HandleQuestionBotEnabled;
-            _discordClient.CommandsEvents.RemoveStreamer += HandleRemoveStreamer;
+            _commandManager.QuestionBotEnabledCommandSuccess += HandleQuestionBotEnabledCommandSuccess;
+            _commandManager.RemoveStreamerCommandSuccess += HandleRemoveStreamerCommandSuccess;
         }
 
         public async Task StartAsync()
@@ -87,9 +91,9 @@ namespace QuestionBot
             await _discordClient.SendMessageAsync(streamer.DiscordChannel, question.ToLightMarkdownString());
         }
 
-        private async void HandleQuestionBotEnabled(object sender, Discord.QuestionBotEnabledArgs e) => await StreamerCreateAsync(e.Streamer);
+        private async void HandleQuestionBotEnabledCommandSuccess(object sender, QuestionBotEnabledArgs e) => await StreamerCreateAsync(e.Streamer);
 
-        private async void HandleRemoveStreamer(object sender, Discord.RemoveStreamerArgs e)
+        private async void HandleRemoveStreamerCommandSuccess(object sender, RemoveStreamerArgs e)
         {
             var discordId = e.DiscordId;
 

@@ -56,15 +56,15 @@ namespace QuestionBot.Twitch
             reconnect.Enabled = true;
         }
 
-        public void Disconnect() => _client.Disconnect();
-
-        protected virtual void OnQuestionReceived(Question question) => QuestionReceived?.Invoke(this, new QuestionReceivedArgs(question));
-
-        private void SendMessage(string content)
+        public void SendMessage(string content)
         {
             _client.SendMessage(_channelName, content);
             Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Message sent: {content}");
         }
+
+        public void Disconnect() => _client.Disconnect();
+
+        protected virtual void OnQuestionReceived(Question question) => QuestionReceived?.Invoke(this, new QuestionReceivedArgs(question));
 
         private void HandleMessageReceived(object sender, OnMessageReceivedArgs e)
         {

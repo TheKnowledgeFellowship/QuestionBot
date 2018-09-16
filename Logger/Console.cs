@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using DSharpPlus.CommandsNext;
+using DSharpPlus.EventArgs;
 
 namespace QuestionBot.Logger
 {
@@ -27,23 +27,17 @@ namespace QuestionBot.Logger
             System.Console.WriteLine(logMessage.ToString());
         }
 
-        public static void LogCommand(string command, CommandContext context)
+        public static void LogCommand(string command, MessageCreateEventArgs args)
         {
             var logMessage = "";
 
             logMessage += $"Command: \"{command}\" ";
-            logMessage += $"triggerd by: \"{context.Message.Author}\" ";
-            logMessage += $"in: \"{context.Message.Channel}\" ";
-            logMessage += $"in: \"{context.Guild}\" ";
-            logMessage += $"(message contents: \"{context.Message.Content}\") ";
+            logMessage += $"triggerd by: \"{args.Author.Username}\" ";
+            logMessage += $"in: \"{args.Channel.Name}\" ";
+            logMessage += $"in: \"{args.Guild.Name}\" ";
+            logMessage += $"(message contents: \"{args.Message.Content}\") ";
 
-            Log(Category.Discord, logMessage.ToString());
-        }
-
-        public static async Task ResponseLogAsync(string content, CommandContext context)
-        {
-            await context.RespondAsync(content);
-            Console.Log(Logger.Category.Discord, $"Response: \"{content}\"");
+            Log(Category.Discord, logMessage);
         }
     }
 }
