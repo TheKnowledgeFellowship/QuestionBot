@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using QuestionBot.Models;
@@ -69,8 +70,14 @@ namespace QuestionBot.Twitch
         private void HandleMessageReceived(object sender, OnMessageReceivedArgs e)
         {
             var message = e.ChatMessage.Message.ToLower();
-            var byKeywords = (_streamer.QuestionRecognitionMode == QuestionRecognitionMode.ByKeywords || _streamer.QuestionRecognitionMode == QuestionRecognitionMode.Both);
-            var byCommand = (_streamer.QuestionRecognitionMode == QuestionRecognitionMode.ByCommand || _streamer.QuestionRecognitionMode == QuestionRecognitionMode.Both);
+            Streamer streamer;
+            using (var db = new CuriosityContext())
+                streamer = db.Streamer
+                    .SingleOrDefault(s => s.Id == _streamer.Id);
+            if (streamer == null)
+                return;
+            var byKeywords = (streamer.QuestionRecognitionMode == QuestionRecognitionMode.ByKeywords || streamer.QuestionRecognitionMode == QuestionRecognitionMode.Both);
+            var byCommand = (streamer.QuestionRecognitionMode == QuestionRecognitionMode.ByCommand || streamer.QuestionRecognitionMode == QuestionRecognitionMode.Both);
 
             var isQuestion = false;
 
@@ -83,7 +90,7 @@ namespace QuestionBot.Twitch
             && byKeywords)
                 isQuestion = true;
 
-            var commandPrefix = _streamer.TwitchCommandPrefix;
+            var commandPrefix = streamer.TwitchCommandPrefix;
             if ((message.Contains($"{commandPrefix}q ") || message.Contains($"{commandPrefix}question ")) && byCommand)
                 isQuestion = true;
 
