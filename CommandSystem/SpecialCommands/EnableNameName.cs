@@ -9,7 +9,7 @@ namespace QuestionBot.CommandSystem.SpecialCommands
     public class EnableNameName : ISpecialCommand
     {
         public string Name => "enable-name-name";
-        public string Call => @"^enable\s+.*\s+.*";
+        public string Call => @"^enable\s+.+\s+.+";
         public Platform Platform => Platform.Discord;
         public EventHandler<QuestionBotEnabledArgs> QuestionBotEnabled;
 
@@ -26,7 +26,10 @@ namespace QuestionBot.CommandSystem.SpecialCommands
                 .SingleOrDefault(c => c.Name.ToLower().Trim() == secondArgument.ToLower().Trim());
 
             if (discordChannel == null)
+            {
                 await commandArguments.Client.SendMessageAsync("The provided channel name could not be read.");
+                return;
+            }
 
             var discordChannelId = discordChannel.Id;
 

@@ -9,7 +9,7 @@ namespace QuestionBot.CommandSystem.SpecialCommands
     public class EnableNameId : ISpecialCommand
     {
         public string Name => "enable-name-id";
-        public string Call => @"^enable\s+.*\d+";
+        public string Call => @"^enable\s+.+\d+";
         public Platform Platform => Platform.Discord;
         public EventHandler<QuestionBotEnabledArgs> QuestionBotEnabled;
 
@@ -24,7 +24,10 @@ namespace QuestionBot.CommandSystem.SpecialCommands
 
             ulong discordChannelId;
             if (!ulong.TryParse(secondArgument, out discordChannelId))
+            {
                 await commandArguments.Client.SendMessageAsync("The provided channel id could not be read.");
+                return;
+            }
 
             Streamer potentialStreamer;
             using (var db = new CuriosityContext())

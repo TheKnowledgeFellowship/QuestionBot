@@ -13,7 +13,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
         private List<string> _commandsEveryone = new List<string>();
 
         public string Name => "config-commandpermissionlevel-set-command-platform-permissionlevel";
-        public string Call => @"^config\s+commandpermissionlevel\s+set\s+.*\s+(twitch|discord)\s+(streamer|moderator|everyone)\s*";
+        public string Call => @"^config\s+commandpermissionlevel\s+set\s+.+\s+(twitch|discord)\s+(streamer|moderator|everyone)\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;
