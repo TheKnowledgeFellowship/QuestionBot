@@ -116,20 +116,28 @@ namespace QuestionBot.CommandSystem
             var platformClient = new CommandSystem.PlatformClients.DiscordClient(args, client);
 
             var messageByStreamer = false;
+            var messageByModerator = false;
             Streamer streamer;
             using (var db = new CuriosityContext())
             {
                 messageByStreamer = db.Streamer
                     .Any(s => s.DiscordId == args.Author.Id);
-                // ToDo: This needs to be a check for the streamers guild.
                 streamer = db.Streamer
-                    .SingleOrDefault(s => s.DiscordChannel == args.Channel.Id);
+                    .SingleOrDefault(s => s.DiscordGuild == args.Guild.Id);
+                if (streamer != null)
+                {
+                    messageByModerator = db.Moderators
+                        .Where(m => m.Streamer.Id == streamer.Id)
+                        .Any(m => m.DiscordId == args.Author.Id);
+                }
             }
 
             if (streamer == null)
                 return;
 
             var reachedPermissionLevel = PermissionLevel.everyone;
+            if (messageByModerator)
+                reachedPermissionLevel = PermissionLevel.Moderator;
             if (messageByStreamer)
                 reachedPermissionLevel = PermissionLevel.Streamer;
 
@@ -147,14 +155,15 @@ namespace QuestionBot.CommandSystem
             Logger.Console.LogCommand(targetedCommand.Name, args);
             var platformClient = new CommandSystem.PlatformClients.TwitchClient(client);
 
-            var messageByStreamer = args.ChatMessage.IsBroadcaster;
             Streamer streamer;
             using (var db = new CuriosityContext())
                 streamer = db.Streamer
                     .SingleOrDefault(s => s.TwitchChannelName == args.ChatMessage.Channel);
 
             var reachedPermissionLevel = PermissionLevel.everyone;
-            if (messageByStreamer)
+            if (streamer.TwitchModeratorEnabled && args.ChatMessage.IsModerator)
+                reachedPermissionLevel = PermissionLevel.Moderator;
+            if (args.ChatMessage.IsBroadcaster)
                 reachedPermissionLevel = PermissionLevel.Streamer;
 
             var commandArguments = new StreamerCommandArguments(commandText, platformClient, streamer, reachedPermissionLevel, Platform.Twitch);
