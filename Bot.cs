@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using QuestionBot.CommandSystem;
 using QuestionBot.CommandSystem.SpecialCommands;
 using QuestionBot.Models;
@@ -16,6 +17,9 @@ namespace QuestionBot
 
         public Bot()
         {
+            using (var db = new CuriosityContext())
+                db.Database.Migrate();
+
             _commandManager = new CommandManager();
             _discordClient = new Discord.Client(_commandManager);
             _twitchApi = new Twitch.Api();
