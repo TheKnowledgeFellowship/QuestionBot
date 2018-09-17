@@ -7,14 +7,14 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionRemoveId : IStreamerCommand
     {
         public string Name => "question-remove-id";
-        public string Call => @"^question\s*remove\s*\d+";
+        public string Call => @"^question\s+remove\s+\d+";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;
 
         public async Task ActionAsync(StreamerCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^question\s*remove\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^question\s+remove\s+", RegexOptions.IgnoreCase);
             var arguments = commandArguments.CommandText.Remove(match.Index, match.Length).Trim().Split(" ");
 
             int questionId;

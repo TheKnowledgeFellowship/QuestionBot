@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigTwitchModeratorPrint : IStreamerCommand
     {
         public string Name => "config-twitchmoderator-print";
-        public string Call => @"^config\s*twitchmoderator\s*print\s*";
+        public string Call => @"^config\s+twitchmoderator\s+print\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigTwitchQuestionCommandPrefixPrint : IStreamerCommand
     {
         public string Name => "config-twitchquestioncommandprefix-print";
-        public string Call => @"^config\s*twitchquestioncommandprefix\s*print\s*";
+        public string Call => @"^config\s+twitchquestioncommandprefix\s+print\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

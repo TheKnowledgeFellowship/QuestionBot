@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionAnsweredAll : IStreamerCommand
     {
         public string Name => "question-answered-all";
-        public string Call => @"^question\s*answered\s*all\s*";
+        public string Call => @"^question\s+answered\s+all\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Moderator;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Moderator;
         public Platform Platform => Platform.both;

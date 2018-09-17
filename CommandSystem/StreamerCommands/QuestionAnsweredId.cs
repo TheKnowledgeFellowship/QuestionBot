@@ -7,14 +7,14 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionAnsweredId : IStreamerCommand
     {
         public string Name => "question-answered-id";
-        public string Call => @"^question\s*answered\s*\d+";
+        public string Call => @"^question\s+answered\s+\d+";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Moderator;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Moderator;
         public Platform Platform => Platform.both;
 
         public async Task ActionAsync(StreamerCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^question\s*answered\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^question\s+answered\s+", RegexOptions.IgnoreCase);
             var arguments = commandArguments.CommandText.Remove(match.Index, match.Length).Trim().Split(" ");
 
             int questionId;

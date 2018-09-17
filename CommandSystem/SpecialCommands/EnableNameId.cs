@@ -9,13 +9,13 @@ namespace QuestionBot.CommandSystem.SpecialCommands
     public class EnableNameId : ISpecialCommand
     {
         public string Name => "enable-name-id";
-        public string Call => @"^enable\s*.*\d+";
+        public string Call => @"^enable\s+.*\d+";
         public Platform Platform => Platform.Discord;
         public EventHandler<QuestionBotEnabledArgs> QuestionBotEnabled;
 
         public async Task ActionAsync(SpecialCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^enable\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^enable\s+", RegexOptions.IgnoreCase);
             var arguments = commandArguments.CommandText.Remove(match.Index, match.Length).Trim().Split(" ");
             var firstArgument = arguments[0];
 

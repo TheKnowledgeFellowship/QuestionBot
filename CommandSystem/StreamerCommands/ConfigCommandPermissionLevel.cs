@@ -5,7 +5,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigCommandPermissionLevel : IStreamerCommand
     {
         public string Name => "config-commandpermissionlevel";
-        public string Call => @"^config\s*commandpermissionlevel\s*";
+        public string Call => @"^config\s+commandpermissionlevel\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

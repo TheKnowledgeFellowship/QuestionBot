@@ -5,7 +5,7 @@ namespace QuestionBot.CommandSystem.SpecialCommands
     public class AdminStreamer : ISpecialCommand
     {
         public string Name => "admin-streamer";
-        public string Call => @"^admin\s*streamer\s*";
+        public string Call => @"^admin\s+streamer\s*";
         public Platform Platform => Platform.Discord;
 
         public async Task ActionAsync(SpecialCommandArguments commandArguments)

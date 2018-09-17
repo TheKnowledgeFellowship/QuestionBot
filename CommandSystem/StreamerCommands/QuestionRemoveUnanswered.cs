@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionRemoveUnanswered : IStreamerCommand
     {
         public string Name => "question-remove-unanswered";
-        public string Call => @"^question\s*remove\s*unanswered\s*";
+        public string Call => @"^question\s+remove\s+unanswered\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

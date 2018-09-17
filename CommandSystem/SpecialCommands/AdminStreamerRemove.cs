@@ -5,7 +5,7 @@ namespace QuestionBot.CommandSystem.SpecialCommands
     public class AdminStreamerRemove : ISpecialCommand
     {
         public string Name => "admin-streamer-remove";
-        public string Call => @"^admin\s*streamer\s*remove\s*";
+        public string Call => @"^admin\s+streamer\s+remove\s*";
         public Platform Platform => Platform.Discord;
 
         public async Task ActionAsync(SpecialCommandArguments commandArguments)

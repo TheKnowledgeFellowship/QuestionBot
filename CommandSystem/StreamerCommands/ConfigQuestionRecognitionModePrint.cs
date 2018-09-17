@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigQuestionRecognitionModePrint : IStreamerCommand
     {
         public string Name => "config-questionrecognitionmode-print";
-        public string Call => @"^config\s*questionrecognitionmode\s*print\s*";
+        public string Call => @"^config\s+questionrecognitionmode\s+print\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

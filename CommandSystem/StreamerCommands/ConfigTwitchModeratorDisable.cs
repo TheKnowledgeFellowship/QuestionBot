@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigTwitchModeratorDisable : IStreamerCommand
     {
         public string Name => "config-twitchmoderator-disable";
-        public string Call => @"^config\s*twitchmoderator\s*disable\s*";
+        public string Call => @"^config\s+twitchmoderator\s+disable\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

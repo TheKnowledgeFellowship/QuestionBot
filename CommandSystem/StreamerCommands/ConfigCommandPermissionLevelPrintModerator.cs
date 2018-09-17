@@ -9,7 +9,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigCommandPermissionLevelPrintModerator : IStreamerCommand
     {
         public string Name => "config-commandpermissionlevel-print-moderator";
-        public string Call => @"^config\s*commandpermissionlevel\s*print\s*moderator\s*";
+        public string Call => @"^config\s+commandpermissionlevel\s+print\s+moderator\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.Discord;

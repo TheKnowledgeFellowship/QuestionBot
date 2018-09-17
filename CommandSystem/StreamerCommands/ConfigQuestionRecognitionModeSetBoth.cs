@@ -7,7 +7,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigQuestionRecognitionModeSetBoth : IStreamerCommand
     {
         public string Name => "config-questionrecognitionmode-set-both";
-        public string Call => @"^config\s*questionrecognitionmode\s*set\s*both\s*";
+        public string Call => @"^config\s+questionrecognitionmode\s+set\s+both\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

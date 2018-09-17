@@ -7,14 +7,14 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigTwitchQuestionCommandPrefixSetChar : IStreamerCommand
     {
         public string Name => "config-twitchquestioncommandprefix-set-char";
-        public string Call => @"^config\s*twitchquestioncommandprefix\s*set\s*.\s*";
+        public string Call => @"^config\s+twitchquestioncommandprefix\s+set\s+.\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;
 
         public async Task ActionAsync(StreamerCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^config\s*twitchquestioncommandprefix\s*set\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^config\s+twitchquestioncommandprefix\s+set\s+", RegexOptions.IgnoreCase);
             var arguments = commandArguments.CommandText.Remove(match.Index, match.Length).Trim().Split(" ");
 
             char commandPrefix;

@@ -5,7 +5,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigQuestionRecognitionModeSet : IStreamerCommand
     {
         public string Name => "config-questionrecognitionmode-set";
-        public string Call => @"^config\s*questionrecognitionmode\s*set\s*";
+        public string Call => @"^config\s+questionrecognitionmode\s+set\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

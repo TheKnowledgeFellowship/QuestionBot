@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionUnansweredAll : IStreamerCommand
     {
         public string Name => "question-unanswered-all";
-        public string Call => @"^question\s*unanswered\s*all\s*";
+        public string Call => @"^question\s+unanswered\s+all\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Moderator;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Moderator;
         public Platform Platform => Platform.both;

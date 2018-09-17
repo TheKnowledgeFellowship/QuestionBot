@@ -8,14 +8,14 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigDiscordModeratorAddId : IStreamerCommand
     {
         public string Name => "config-discordmoderator-add-id";
-        public string Call => @"^config\s*discordmoderator\s*add\s*\d+";
+        public string Call => @"^config\s+discordmoderator\s+add\s+\d+";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;
 
         public async Task ActionAsync(StreamerCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^config\s*discordmoderator\s*add\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^config\s+discordmoderator\s+add\s+", RegexOptions.IgnoreCase);
             var arguments = commandArguments.CommandText.Remove(match.Index, match.Length).Trim().Split(" ");
 
             ulong discordId;

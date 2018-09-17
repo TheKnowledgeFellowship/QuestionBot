@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionPrintUnanswered : IStreamerCommand
     {
         public string Name => "question-print-unanswered";
-        public string Call => @"^question\s*print\s*unanswered\s*";
+        public string Call => @"^question\s+print\s+unanswered\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Moderator;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Moderator;
         public Platform Platform => Platform.both;

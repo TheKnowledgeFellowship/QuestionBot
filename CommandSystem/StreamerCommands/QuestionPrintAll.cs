@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionPrintAll : IStreamerCommand
     {
         public string Name => "question-print-all";
-        public string Call => @"^question\s*print\s*all\s*";
+        public string Call => @"^question\s+print\s+all\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Moderator;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Moderator;
         public Platform Platform => Platform.both;

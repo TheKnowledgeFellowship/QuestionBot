@@ -5,7 +5,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigTwitchQuestionCommandPrefix : IStreamerCommand
     {
         public string Name => "config-twitchquestioncommandprefix";
-        public string Call => @"^config\s*twitchquestioncommandprefix\s*";
+        public string Call => @"^config\s+twitchquestioncommandprefix\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

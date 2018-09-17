@@ -5,7 +5,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionPrint : IStreamerCommand
     {
         public string Name => "question-print";
-        public string Call => @"^question\s*print\s*";
+        public string Call => @"^question\s+print\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Moderator;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Moderator;
         public Platform Platform => Platform.both;

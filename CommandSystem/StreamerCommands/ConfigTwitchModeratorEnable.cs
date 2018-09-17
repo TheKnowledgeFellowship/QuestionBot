@@ -6,7 +6,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigTwitchModeratorEnable : IStreamerCommand
     {
         public string Name => "config-twitchmoderator-enable";
-        public string Call => @"^config\s*twitchmoderator\s*enable\s*";
+        public string Call => @"^config\s+twitchmoderator\s+enable\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

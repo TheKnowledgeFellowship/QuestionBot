@@ -8,12 +8,12 @@ namespace QuestionBot.CommandSystem.SpecialCommands
     public class AdminStreamerPermitId : ISpecialCommand
     {
         public string Name => "admin-streamer-permit-id";
-        public string Call => @"^admin\s*streamer\s*permit\s*\d+";
+        public string Call => @"^admin\s+streamer\s+permit\s+\d+";
         public Platform Platform => Platform.Discord;
 
         public async Task ActionAsync(SpecialCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^admin\s*streamer\s*permit\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^admin\s+streamer\s+permit\s+", RegexOptions.IgnoreCase);
             var arguments = commandArguments.CommandText.Remove(match.Index, match.Length).Trim().Split(" ");
 
             ulong discordId;

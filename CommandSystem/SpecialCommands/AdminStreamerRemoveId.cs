@@ -15,13 +15,13 @@ namespace QuestionBot.CommandSystem.SpecialCommands
     public class AdminStreamerRemoveId : ISpecialCommand
     {
         public string Name => "admin-streamer-remove-id";
-        public string Call => @"^admin\s*streamer\s*remove\s*\d+";
+        public string Call => @"^admin\s+streamer\s+remove\s+\d+";
         public Platform Platform => Platform.Discord;
         public EventHandler<RemoveStreamerArgs> RemoveStreamer;
 
         public async Task ActionAsync(SpecialCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^admin\s*streamer\s*remove\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^admin\s+streamer\s+remove\s+", RegexOptions.IgnoreCase);
             var arguments = commandArguments.CommandText.Remove(match.Index, match.Length).Trim().Split(" ");
 
             ulong discordId;

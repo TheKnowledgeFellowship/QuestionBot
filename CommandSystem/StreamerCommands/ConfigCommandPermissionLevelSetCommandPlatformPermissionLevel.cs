@@ -13,17 +13,17 @@ namespace QuestionBot.CommandSystem.StreamerCommands
         private List<string> _commandsEveryone = new List<string>();
 
         public string Name => "config-commandpermissionlevel-set-command-platform-permissionlevel";
-        public string Call => @"^config\s*commandpermissionlevel\s*set\s*.*\s*(twitch|discord)\s*(streamer|moderator|everyone)\s*";
+        public string Call => @"^config\s+commandpermissionlevel\s+set\s+.*\s+(twitch|discord)\s+(streamer|moderator|everyone)\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;
 
         public async Task ActionAsync(StreamerCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^config\s*commandpermissionlevel\s*set\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^config\s+commandpermissionlevel\s+set\s+", RegexOptions.IgnoreCase);
             var commandText = commandArguments.CommandText.Remove(match.Index, match.Length).Trim();
 
-            match = Regex.Match(commandText, @"(twitch|discord)\s*(streamer|moderator|everyone)\s*", RegexOptions.IgnoreCase);
+            match = Regex.Match(commandText, @"(twitch|discord)\s+(streamer|moderator|everyone)\s*", RegexOptions.IgnoreCase);
             System.Console.WriteLine($"{match.Index} {match.Length}");
 
             var argumentCommand = commandText.Substring(0, match.Index).Trim().ToLower();

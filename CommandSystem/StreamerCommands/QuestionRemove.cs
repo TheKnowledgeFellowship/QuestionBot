@@ -5,7 +5,7 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class QuestionRemove : IStreamerCommand
     {
         public string Name => "question-remove";
-        public string Call => @"^question\s*remove\s*";
+        public string Call => @"^question\s+remove\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;

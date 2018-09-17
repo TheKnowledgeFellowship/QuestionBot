@@ -7,14 +7,14 @@ namespace QuestionBot.CommandSystem.StreamerCommands
     public class ConfigDiscordModeratorRemoveId : IStreamerCommand
     {
         public string Name => "config-discordmoderator-remove-id";
-        public string Call => @"^config\s*discordmoderator\s*remove\s*\d+";
+        public string Call => @"^config\s+discordmoderator\s+remove\s+\d+";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;
 
         public async Task ActionAsync(StreamerCommandArguments commandArguments)
         {
-            var match = Regex.Match(commandArguments.CommandText, @"^config\s*discordmoderator\s*remove\s*", RegexOptions.IgnoreCase);
+            var match = Regex.Match(commandArguments.CommandText, @"^config\s+discordmoderator\s+remove\s+", RegexOptions.IgnoreCase);
             var arguments = commandArguments.CommandText.Remove(match.Index, match.Length).Trim().Split(" ");
 
             ulong discordId;
