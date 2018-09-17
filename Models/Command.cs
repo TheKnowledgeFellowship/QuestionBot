@@ -4,6 +4,12 @@ namespace QuestionBot.Models
 {
     public class Command
     {
+        public Command(string name, int streamerId)
+        {
+            this.Name = name;
+            this.StreamerId = streamerId;
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
 

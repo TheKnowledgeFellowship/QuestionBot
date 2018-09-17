@@ -44,6 +44,19 @@ namespace QuestionBot.CommandSystem
             // StreamerCommands:
             // config-
             StreamerCommands.Add(new StreamerCommands.Config());
+            // config-commandpermissionlevel-
+            StreamerCommands.Add(new StreamerCommands.ConfigCommandPermissionLevel());
+            StreamerCommands.Add(new StreamerCommands.ConfigCommandPermissionLevelPrint());
+            StreamerCommands.Add(new StreamerCommands.ConfigCommandPermissionLevelPrintEveryone());
+            StreamerCommands.Add(new StreamerCommands.ConfigCommandPermissionLevelPrintModerator());
+            StreamerCommands.Add(new StreamerCommands.ConfigCommandPermissionLevelPrintStreamer());
+            StreamerCommands.Add(new StreamerCommands.ConfigCommandPermissionLevelSet());
+            StreamerCommands.Add(new StreamerCommands.ConfigCommandPermissionLevelSetCommandPlatformPermissionLevel());
+            // config-discordmoderator-
+            StreamerCommands.Add(new StreamerCommands.ConfigDiscordModerator());
+            StreamerCommands.Add(new StreamerCommands.ConfigDiscordModeratorAddId());
+            StreamerCommands.Add(new StreamerCommands.ConfigDiscordModeratorPrint());
+            StreamerCommands.Add(new StreamerCommands.ConfigDiscordModeratorRemoveId());
             // config-questionrecognitionmode-
             StreamerCommands.Add(new StreamerCommands.ConfigQuestionRecognitionMode());
             StreamerCommands.Add(new StreamerCommands.ConfigQuestionRecognitionModePrint());
@@ -53,6 +66,11 @@ namespace QuestionBot.CommandSystem
             StreamerCommands.Add(new StreamerCommands.ConfigQuestionRecognitionModeSetByCommand());
             StreamerCommands.Add(new StreamerCommands.ConfigQuestionRecognitionModeSetByKeywords());
             StreamerCommands.Add(new StreamerCommands.ConfigQuestionRecognitionModeSetDefault());
+            // config-twitchmoderator-
+            StreamerCommands.Add(new StreamerCommands.ConfigTwitchModerator());
+            StreamerCommands.Add(new StreamerCommands.ConfigTwitchModeratorDisable());
+            StreamerCommands.Add(new StreamerCommands.ConfigTwitchModeratorEnable());
+            StreamerCommands.Add(new StreamerCommands.ConfigTwitchModeratorPrint());
             // config-twitchquestioncommandprefix-
             StreamerCommands.Add(new StreamerCommands.ConfigTwitchQuestionCommandPrefix());
             StreamerCommands.Add(new StreamerCommands.ConfigTwitchQuestionCommandPrefixPrint());

@@ -9,6 +9,7 @@ namespace QuestionBot
         public DbSet<Streamer> Streamer { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Models.Command> Commands { get; set; }
+        public DbSet<Moderator> Moderators { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
