@@ -9,7 +9,7 @@ namespace QuestionBot.CommandSystem.SpecialCommands
     public class EnableNameId : ISpecialCommand
     {
         public string Name => "enable-name-id";
-        public string Call => @"^enable\s+.+\d+";
+        public string Call => @"^enable\s+.+\s+\d+";
         public Platform Platform => Platform.Discord;
         public EventHandler<QuestionBotEnabledArgs> QuestionBotEnabled;
 

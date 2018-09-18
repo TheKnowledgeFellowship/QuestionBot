@@ -185,7 +185,12 @@ namespace QuestionBot.CommandSystem
                 {
                     if (streamerCommand != null)
                     {
-                        if (streamerCommand.Name.Length < command.Name.Length)
+                        var newHasId = command.Name.EndsWith("-id");
+                        var currentHasId = streamerCommand.Name.EndsWith("-id");
+                        if (newHasId && !currentHasId)
+                            streamerCommand = command;
+                        else if (currentHasId && !newHasId) { }
+                        else if (streamerCommand.Name.Length < command.Name.Length)
                             streamerCommand = command;
                     }
                     else
@@ -204,7 +209,12 @@ namespace QuestionBot.CommandSystem
                 {
                     if (targetedSpecialCommand != null)
                     {
-                        if (targetedSpecialCommand.Name.Length < command.Name.Length)
+                        var newHasId = command.Name.EndsWith("-id");
+                        var currentHasId = targetedSpecialCommand.Name.EndsWith("-id");
+                        if (newHasId && !currentHasId)
+                            targetedSpecialCommand = command;
+                        else if (currentHasId && !newHasId) { }
+                        else if (targetedSpecialCommand.Name.Length < command.Name.Length)
                             targetedSpecialCommand = command;
                     }
                     else
