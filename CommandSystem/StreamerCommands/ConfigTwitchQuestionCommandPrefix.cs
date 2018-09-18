@@ -15,6 +15,6 @@ namespace QuestionBot.CommandSystem.StreamerCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Config TwitchQuestionCommandPrefix command provides sub-commands to set the prefix character of the `q` and `question` command for the Twitch chat. You can also print out the current prefix. Usage: `(prefix)Config TwitchQuestionCommandPrefix [ set [ character / default ] / print ]`.";
+        public string Help() => "The Config TwitchQuestionCommandPrefix command provides sub-commands to set the prefix character of the `q` and `question` command for the Twitch chat. You can also print out the current prefix. Usage: `(prefix)Config TwitchQuestionCommandPrefix [ Set [ character / default ] / Print ]`.";
     }
 }

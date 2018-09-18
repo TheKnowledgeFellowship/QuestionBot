@@ -15,6 +15,6 @@ namespace QuestionBot.CommandSystem.StreamerCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Config QuestionRecognitionMode command provides sub-commands to set the mode, the bot uses to recognise questions in the Twitch chat. You can also print out the current mode. Usage: `(prefix)Config QuestionRecognitionMode [ set [ byCommand / byKeywords / both / default ] / print ]`.";
+        public string Help() => "The Config QuestionRecognitionMode command provides sub-commands to set the mode, the bot uses to recognise questions in the Twitch chat. You can also print out the current mode. Usage: `(prefix)Config QuestionRecognitionMode [ Set [ byCommand / byKeywords / both / default ] / Print ]`.";
     }
 }

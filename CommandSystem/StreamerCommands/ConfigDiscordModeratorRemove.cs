@@ -2,10 +2,10 @@ using System.Threading.Tasks;
 
 namespace QuestionBot.CommandSystem.StreamerCommands
 {
-    public class ConfigQuestionRecognitionModeSet : IStreamerCommand
+    public class ConfigDiscordModeratorRemove : IStreamerCommand
     {
-        public string Name => "config-questionrecognitionmode-set";
-        public string Call => @"^config\s+questionrecognitionmode\s+set\s*";
+        public string Name => "config-discordmoderator-remove";
+        public string Call => @"^config\s+discordmoderator\s+remove\s*";
         public PermissionLevel TwitchPermissionLevel => PermissionLevel.Streamer;
         public PermissionLevel DiscordPermissionLevel => PermissionLevel.Streamer;
         public Platform Platform => Platform.both;
@@ -15,6 +15,6 @@ namespace QuestionBot.CommandSystem.StreamerCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Config QuestionRecognitionMode command enables you to set the mode, the bot uses to recognise questions in the Twitch chat. Usage: `(prefix)Config QuestionRecognitionMode Set [ byCommand / byKeywords / both / default ]`.";
+        public string Help() => "The Config DiscordModerator Remove command enables you to remove Discord moderators. Usage: `(prefix)Config DiscordModerator Remove [ id ]`.";
     }
 }

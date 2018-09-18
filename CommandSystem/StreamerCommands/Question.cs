@@ -15,6 +15,6 @@ namespace QuestionBot.CommandSystem.StreamerCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Question command provides sub-commands, that can do all kind of question related stuff. Usage: `(prefix)Question [ Print / Answered / Unanswered ]`.";
+        public string Help() => "The Question command provides sub-commands, that can do all kind of question related stuff. Usage: `(prefix)Question [ Print / Answered / Unanswered / Remove ]`.";
     }
 }

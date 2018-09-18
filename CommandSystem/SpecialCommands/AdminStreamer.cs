@@ -13,6 +13,6 @@ namespace QuestionBot.CommandSystem.SpecialCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Admin Streamer command provides sub-commands to manage the streamer, that use and or want to use the bot. Usage: `(prefix) Admin Streamer [ permit / remove ]`";
+        public string Help() => "The Admin Streamer command provides sub-commands to manage the streamer, that use and or want to use the bot. Usage: `(prefix) Admin Streamer [ Permit / Remove ]`";
     }
 }

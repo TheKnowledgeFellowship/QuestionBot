@@ -15,6 +15,6 @@ namespace QuestionBot.CommandSystem.StreamerCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Config CommandPermissionLevel Print command prints all commands, that support the specified permission level. It also shows the current permission level for each command. Usage: `Config CommandPermissionLevel Overview [ streamer / moderator / everyone ]`";
+        public string Help() => "The Config CommandPermissionLevel Print command prints all commands, that support the specified permission level. It also shows the current permission level for each command. Usage: `Config CommandPermissionLevel Print [ streamer / moderator / everyone ]`";
     }
 }

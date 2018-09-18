@@ -15,6 +15,6 @@ namespace QuestionBot.CommandSystem.StreamerCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Config command provides sub-commands to configure different settings. Usage: `(prefix)Config [ QuestionRecognitionMode / TwitchQuestionCommandPrefix / CommandPermissionLevel / DiscordModerator / TwitchModerator ]`.";
+        public string Help() => "The Config command provides sub-commands to configure different settings. Usage: `(prefix)Config [ CommandPermissionLevel / DiscordModerator / QuestionRecognitionMode / TwitchModerator / TwitchQuestionCommandPrefix ]`.";
     }
 }

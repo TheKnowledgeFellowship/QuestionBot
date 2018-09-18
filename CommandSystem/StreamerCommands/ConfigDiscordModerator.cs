@@ -16,6 +16,6 @@ namespace QuestionBot.CommandSystem.StreamerCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Config DiscordModerator command enables you to add and remove Discord moderators. You can also print out all Discord moderators. Usage: `(prefix)Config DiscordModerator [ add [ id ] / remove [ id ] / print ]`.";
+        public string Help() => "The Config DiscordModerator command enables you to add and remove Discord moderators. You can also print out all Discord moderators. Usage: `(prefix)Config DiscordModerator [ Add [ id ] / Remove [ id ] / Print ]`.";
     }
 }

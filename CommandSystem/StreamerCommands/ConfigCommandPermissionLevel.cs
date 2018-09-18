@@ -15,6 +15,6 @@ namespace QuestionBot.CommandSystem.StreamerCommands
             await commandArguments.Client.SendMessageAsync(Help());
         }
 
-        public string Help() => "The Config CommandPermissionLevel command enables you to set the permission level for certain commands to certain permission levels. It can also print out all commands, that support a specified permission level. Usage: `(prefix)Config CommandPermissionLevel [ set [ command + platform + permission level ] / print [ streamer / moderator / everyone ] ]`";
+        public string Help() => "The Config CommandPermissionLevel command enables you to set the permission level for certain commands to certain permission levels. It can also print out all commands, that support a specified permission level. Usage: `(prefix)Config CommandPermissionLevel [ Set [ command + platform + permission level ] / Print [ streamer / moderator / everyone ] ]`";
     }
 }
