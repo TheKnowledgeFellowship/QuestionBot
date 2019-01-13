@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using QuestionBot.CommandSystem;
@@ -50,7 +51,7 @@ namespace QuestionBot.Twitch
 
             _client.Connect();
 
-            var reconnect = new Timer(TimeSpan.FromHours(6).TotalMilliseconds);
+            var reconnect = new System.Timers.Timer(TimeSpan.FromHours(6).TotalMilliseconds);
             reconnect.Elapsed += (Object source, ElapsedEventArgs e) =>
             {
                 _client.Reconnect();
@@ -62,7 +63,37 @@ namespace QuestionBot.Twitch
 
         public void SendMessage(string content)
         {
-            _client.SendMessage(_channelName, content);
+            // Check, if the client is connected to any channel and reconnect, if it's not.
+            if (_client.JoinedChannels.Count == 0)
+            {
+                Logger.Console.Log(Logger.Category.Twitch, "The client is currently not connected to any channel. Therefore reconnect and wait until a new connection is in place.", true);
+                _client.Reconnect();
+
+                var counter = 0;
+                while (!_client.IsConnected)
+                {
+                    if (counter >= 120)
+                    {
+                        Logger.Console.Log(Logger.Category.Twitch, $"No new connection in place. Waited for {counter} seconds. SendMessageAsync will return now."
+                        + $"Therefore weren't able to send the message: {content} to the channel {_streamer.TwitchChannelName}.", true);
+                        return;
+                    }
+
+                    Logger.Console.Log(Logger.Category.Twitch, $"No new connection in place. Waiting for 1 second until checking again. Waited for {counter} seconds now.");
+                    Thread.Sleep(1000);
+                    counter++;
+                }
+            }
+            try
+            {
+                _client.SendMessage(_channelName, content);
+            }
+            catch (Exception e)
+            {
+                Logger.Console.Log(Logger.Category.Twitch, $"Something went wrong. Probably weren't able to send the message: {content} to the channel {_streamer.TwitchChannelName}."
+                    + $"\nException: {e.Message}", true);
+                return;
+            }
             Logger.Console.Log(Logger.Category.Twitch, $"({_streamer.TwitchChannelName}) Message sent: {content}");
         }
 
